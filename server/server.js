@@ -190,6 +190,32 @@ app.post('/api/projects', authMiddleware, async (req, res) => {
     }
 });
 
+app.put('/api/projects/:id', authMiddleware, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, domain } = req.body;
+
+        const { data: project, error } = await supabase
+            .from('projects')
+            .update({ name, domain })
+            .eq('id', id)
+            .eq('user_id', req.userId)
+            .select()
+            .single();
+
+        if (error) throw error;
+
+        if (!project) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        res.json(project);
+    } catch (error) {
+        console.error('Update project error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 app.delete('/api/projects/:id', authMiddleware, async (req, res) => {
     try {
         const { id } = req.params;

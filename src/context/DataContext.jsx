@@ -135,6 +135,29 @@ export function DataProvider({ children }) {
         }
     };
 
+    // Update project
+    const updateProject = async (projectId, name, domain) => {
+        try {
+            const response = await fetch(`${API_URL}/projects/${projectId}`, {
+                method: 'PUT',
+                headers: { ...getAuthHeader(), 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, domain }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update project');
+            }
+
+            const updatedProject = await response.json();
+            setProjects(prev =>
+                prev.map(p => p.id === projectId ? { ...p, name, domain } : p)
+            );
+            return updatedProject;
+        } catch (error) {
+            throw error;
+        }
+    };
+
     // Fetch data when user changes
     useEffect(() => {
         if (user) {
@@ -160,6 +183,7 @@ export function DataProvider({ children }) {
             stats,
             loading,
             createProject,
+            updateProject,
             deleteProject,
             regenerateApiKey,
             refresh,

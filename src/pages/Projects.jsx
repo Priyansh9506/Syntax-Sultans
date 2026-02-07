@@ -11,16 +11,20 @@ import {
     Check,
     FolderKanban,
     Globe,
-    Key
+    Key,
+    Pencil
 } from 'lucide-react';
 import { format } from 'date-fns';
 import './Projects.css';
 
 export default function Projects() {
-    const { projects, createProject, deleteProject, regenerateApiKey, loading } = useData();
+    const { projects, createProject, updateProject, deleteProject, regenerateApiKey, loading } = useData();
     const [showModal, setShowModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editingProject, setEditingProject] = useState(null);
     const [newProject, setNewProject] = useState({ name: '', domain: '' });
     const [creating, setCreating] = useState(false);
+    const [updating, setUpdating] = useState(false);
     const [copiedKey, setCopiedKey] = useState(null);
 
     const handleCreate = async (e) => {
@@ -34,6 +38,25 @@ export default function Projects() {
             console.error('Failed to create project:', error);
         } finally {
             setCreating(false);
+        }
+    };
+
+    const handleEdit = (project) => {
+        setEditingProject({ id: project.id, name: project.name, domain: project.domain || '' });
+        setShowEditModal(true);
+    };
+
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+        setUpdating(true);
+        try {
+            await updateProject(editingProject.id, editingProject.name, editingProject.domain);
+            setShowEditModal(false);
+            setEditingProject(null);
+        } catch (error) {
+            console.error('Failed to update project:', error);
+        } finally {
+            setUpdating(false);
         }
     };
 
@@ -108,6 +131,13 @@ export default function Projects() {
                                     <div className="project-actions">
                                         <button
                                             className="btn btn-ghost btn-sm"
+                                            onClick={() => handleEdit(project)}
+                                            title="Edit Project"
+                                        >
+                                            <Pencil size={16} />
+                                        </button>
+                                        <button
+                                            className="btn btn-ghost btn-sm"
                                             onClick={() => handleRegenerateKey(project.id)}
                                             title="Regenerate API Key"
                                         >
@@ -145,10 +175,10 @@ export default function Projects() {
                                         <span>API Key</span>
                                     </div>
                                     <div className="api-key-value">
-                                        <code>{project.apiKey}</code>
+                                        <code>{project.apiKey || project.api_key}</code>
                                         <button
                                             className="btn btn-ghost btn-sm"
-                                            onClick={() => copyToClipboard(project.apiKey, project.id)}
+                                            onClick={() => copyToClipboard(project.apiKey || project.api_key, project.id)}
                                         >
                                             {copiedKey === project.id ? <Check size={14} /> : <Copy size={14} />}
                                         </button>
@@ -213,6 +243,67 @@ export default function Projects() {
                                         disabled={creating}
                                     >
                                         {creating ? 'Creating...' : 'Create Project'}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+
+                {/* Edit Project Modal */}
+                {showEditModal && editingProject && (
+                    <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
+                        <div className="modal" onClick={(e) => e.stopPropagation()}>
+                            <div className="modal-header">
+                                <h2>Edit Project</h2>
+                                <button
+                                    className="modal-close"
+                                    onClick={() => setShowEditModal(false)}
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            <form onSubmit={handleUpdate}>
+                                <div className="input-group">
+                                    <label htmlFor="editProjectName">Project Name</label>
+                                    <input
+                                        id="editProjectName"
+                                        type="text"
+                                        className="input"
+                                        placeholder="My Website"
+                                        value={editingProject.name}
+                                        onChange={(e) => setEditingProject({ ...editingProject, name: e.target.value })}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="input-group mt-md">
+                                    <label htmlFor="editProjectDomain">Domain (optional)</label>
+                                    <input
+                                        id="editProjectDomain"
+                                        type="text"
+                                        className="input"
+                                        placeholder="example.com"
+                                        value={editingProject.domain}
+                                        onChange={(e) => setEditingProject({ ...editingProject, domain: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="modal-actions mt-lg">
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        onClick={() => setShowEditModal(false)}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary"
+                                        disabled={updating}
+                                    >
+                                        {updating ? 'Saving...' : 'Save Changes'}
                                     </button>
                                 </div>
                             </form>
