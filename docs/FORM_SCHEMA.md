@@ -1,4 +1,9 @@
+[← Back to README](../README.md)
+
 # DataPulse — Form Schema Reference
+
+> [!INFO]
+> Reference for all supported form types and their JSON structure.
 
 > **Project:** DataPulse  
 > **Version:** 1.0  

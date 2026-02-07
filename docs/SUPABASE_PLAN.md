@@ -1,4 +1,9 @@
+[← Back to README](../README.md)
+
 # DataPulse — Supabase Integration Plan
+
+> [!WARNING]
+> Always backup existing data before performing database migrations.
 
 > **Project:** DataPulse  
 > **Version:** 1.0  

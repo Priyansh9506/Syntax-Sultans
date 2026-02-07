@@ -1,4 +1,9 @@
+[← Back to README](../README.md)
+
 # DataPulse — Architecture Documentation
+
+> [!NOTE]
+> This is a living document and will be updated as the system evolves.
 
 > **Project:** DataPulse  
 > **Version:** 1.0  

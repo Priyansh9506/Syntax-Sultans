@@ -1,4 +1,9 @@
+[← Back to README](../README.md)
+
 # DataPulse — Implementation Plan
+
+> [!IMPORTANT]
+> This is a roadmap for the hackathon MVP.
 
 > **Project:** DataPulse  
 > **Version:** 1.0  

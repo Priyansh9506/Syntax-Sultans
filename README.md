@@ -324,9 +324,11 @@ This project was built with **AI pair programming**:
 
 | Document | Description |
 |----------|-------------|
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | System design & API docs |
-| [INTEGRATION.md](./INTEGRATION.md) | Step-by-step integration guide |
-| [CLAUDE.md](./CLAUDE.md) | AI context & project structure |
+| [ARCHITECTURE.md](./docs/ARCHITECTURE.md) | System design & API docs |
+| [INTEGRATION.md](./docs/INTEGRATION.md) | Step-by-step integration guide |
+| [CLAUDE.md](./docs/CLAUDE.md) | AI context & project structure |
+| [FORM_SCHEMA.md](./docs/FORM_SCHEMA.md) | Form validation schemas |
+| [SUPABASE_PLAN.md](./docs/SUPABASE_PLAN.md) | Database implementation plan |
 
 ---
 

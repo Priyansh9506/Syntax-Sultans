@@ -1,4 +1,9 @@
+[← Back to README](../README.md)
+
 # DataPulse - AI Context File
+
+> [!NOTE]
+> Overview of project context and structure for AI assistants.
 
 ## Overview
 Universal Website Data Tracking SaaS for ACM Hackathon 2026.

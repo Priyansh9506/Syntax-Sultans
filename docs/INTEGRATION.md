@@ -1,4 +1,9 @@
+[← Back to README](../README.md)
+
 # DataPulse — Integration Guide
+
+> [!TIP]
+> Ensure you have your project API key ready before starting deployment.
 
 > **Project:** DataPulse  
 > **Version:** 1.0  
