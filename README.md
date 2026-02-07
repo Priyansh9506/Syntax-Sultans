@@ -108,7 +108,7 @@ Export all submissions as JSON. Filter by date, form, or custom criteria.
 
 ```
 ┌──────────────────┐     ┌──────────────────┐     ┌──────────────────┐
-│  1. Add Script   │ ──▶ │  2. User Submits │ ──▶│  3. See in      │
+│  1. Add Script   │ ──▶ │ 2. User Submits │ ──▶ │  3. See in       │
 │  to your site    │     │  any form        │     │  Dashboard       │
 └──────────────────┘     └──────────────────┘     └──────────────────┘
       5 seconds              automatic              instant
