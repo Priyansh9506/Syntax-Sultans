@@ -596,23 +596,23 @@
 .comparison-table .icon-check {
     color: #22c55e;
     display: inline-flex;
-    justify-content: flex-end;
 }
 
 .comparison-table .icon-x {
     color: var(--color-text-muted);
     opacity: 0.5;
     display: inline-flex;
-    justify-content: flex-end;
 }
 
-/* Center icons in table cells */
+/* Left align tick marks in plan columns */
 .comparison-table td:not(:first-child) {
-    text-align: center;
+    text-align: left;
+    padding-left: 40px;
 }
 
-.comparison-table td svg {
-    margin: 0 auto;
+.comparison-table th:not(:first-child) {
+    text-align: left;
+    padding-left: 40px;
 }
 
 /* ============================================
