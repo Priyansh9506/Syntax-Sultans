@@ -103,6 +103,11 @@ Export all submissions as JSON. Filter by date, form, or custom criteria.
 
 ### Live Dashboard Preview
 
+> **Try it yourself!**
+> | Email | Password |
+> |-------|----------|
+> | `demo@datapulse.io` | `1demo234` |
+
 | Dashboard | Projects | Submissions |
 |-----------|----------|-------------|
 | 📈 Stats & Charts | 🗂️ Manage Sites | 📋 View Data |
