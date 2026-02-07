@@ -1,3 +1,15 @@
+/* Export Buttons */
+.export-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.export-buttons .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
 /* Filters */
 .submissions-filters {
     display: flex;

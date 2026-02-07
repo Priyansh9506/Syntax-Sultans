@@ -52,19 +52,29 @@ export function DataProvider({ children }) {
 
             if (response.ok) {
                 const data = await response.json();
-                setSubmissions(data);
+                // Map snake_case from API to camelCase for frontend
+                const mappedData = data.map(sub => ({
+                    id: sub.id,
+                    projectId: sub.project_id,
+                    formId: sub.form_id,
+                    data: sub.data,
+                    pageUrl: sub.page_url,
+                    userAgent: sub.user_agent,
+                    timestamp: sub.timestamp,
+                }));
+                setSubmissions(mappedData);
 
                 // Calculate stats
                 const today = new Date().toDateString();
-                const todayCount = data.filter(s =>
+                const todayCount = mappedData.filter(s =>
                     new Date(s.timestamp).toDateString() === today
                 ).length;
 
                 setStats(prev => ({
                     ...prev,
-                    totalSubmissions: data.length,
+                    totalSubmissions: mappedData.length,
                     todaySubmissions: todayCount,
-                    conversionRate: data.length > 0 ? Math.round((data.length / (data.length * 3)) * 100) : 0,
+                    conversionRate: mappedData.length > 0 ? Math.round((mappedData.length / (mappedData.length * 3)) * 100) : 0,
                 }));
             }
         } catch (error) {

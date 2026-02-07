@@ -106,6 +106,126 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 // ============================================
+// User Management Routes (require auth)
+// ============================================
+
+// Update profile (name)
+app.put('/api/auth/profile', async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+        const token = authHeader.split(' ')[1];
+        const userId = tokenStore.get(token);
+        if (!userId) {
+            return res.status(401).json({ message: 'Session expired, please login again' });
+        }
+
+        const { name } = req.body;
+
+        const { data: user, error } = await supabase
+            .from('users')
+            .update({ name })
+            .eq('id', userId)
+            .select()
+            .single();
+
+        if (error) throw error;
+
+        console.log(`[Auth] Profile updated for user: ${userId}`);
+        res.json({ user: { id: user.id, name: user.name, email: user.email } });
+    } catch (error) {
+        console.error('Profile update error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Update password
+app.put('/api/auth/password', async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+        const token = authHeader.split(' ')[1];
+        const userId = tokenStore.get(token);
+        if (!userId) {
+            return res.status(401).json({ message: 'Session expired, please login again' });
+        }
+
+        const { currentPassword, newPassword } = req.body;
+
+        // Verify current password
+        const { data: user, error: fetchError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', userId)
+            .single();
+
+        if (fetchError || !user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (user.password !== currentPassword) {
+            return res.status(400).json({ message: 'Current password is incorrect' });
+        }
+
+        // Update password
+        const { error } = await supabase
+            .from('users')
+            .update({ password: newPassword })
+            .eq('id', userId);
+
+        if (error) throw error;
+
+        console.log(`[Auth] Password updated for user: ${userId}`);
+        res.json({ message: 'Password updated successfully' });
+    } catch (error) {
+        console.error('Password update error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Delete account
+app.delete('/api/auth/account', async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+        const token = authHeader.split(' ')[1];
+        const userId = tokenStore.get(token);
+        if (!userId) {
+            return res.status(401).json({ message: 'Session expired, please login again' });
+        }
+
+        // Delete user's projects (submissions will cascade or be orphaned depending on DB setup)
+        await supabase
+            .from('projects')
+            .delete()
+            .eq('user_id', userId);
+
+        // Delete user
+        const { error } = await supabase
+            .from('users')
+            .delete()
+            .eq('id', userId);
+
+        if (error) throw error;
+
+        // Remove token
+        tokenStore.delete(token);
+
+        console.log(`[Auth] Account deleted for user: ${userId}`);
+        res.status(204).send();
+    } catch (error) {
+        console.error('Account deletion error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// ============================================
 // Auth Middleware
 // ============================================
 const authMiddleware = async (req, res, next) => {
@@ -277,7 +397,7 @@ app.post('/api/track', async (req, res) => {
             return res.status(401).json({ message: 'Invalid API key' });
         }
 
-        // Insert submission
+        // Insert submission with timestamp
         const { data: submission, error } = await supabase
             .from('submissions')
             .insert({
@@ -286,7 +406,8 @@ app.post('/api/track', async (req, res) => {
                 form_id: formId || 'unknown',
                 data: data || {},
                 page_url: pageUrl || '',
-                user_agent: userAgent || ''
+                user_agent: userAgent || '',
+                timestamp: new Date().toISOString()
             })
             .select()
             .single();

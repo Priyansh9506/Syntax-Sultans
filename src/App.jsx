@@ -11,6 +11,7 @@ import Projects from './pages/Projects';
 import Submissions from './pages/Submissions';
 import Integration from './pages/Integration';
 import Subscription from './pages/Subscription';
+import Settings from './pages/Settings';
 
 // Import global styles
 import './index.css';
@@ -81,7 +82,7 @@ function AppRoutes() {
       } />
       <Route path="/settings" element={
         <ProtectedRoute>
-          <Dashboard />
+          <Settings />
         </ProtectedRoute>
       } />
       <Route path="/help" element={

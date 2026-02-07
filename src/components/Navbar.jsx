@@ -34,7 +34,11 @@ export default function Navbar({ showAuth = true }) {
                 <div className="navbar-actions">
                     {showAuth && !user && (
                         <>
-                            <Link to="/#features" className="navbar-link">Features</Link>
+                            <a href="#features" className="navbar-link" onClick={(e) => {
+                                e.preventDefault();
+                                const el = document.getElementById('features');
+                                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                            }}>Features</a>
                             <Link to="/subscription" className="navbar-link">Pricing</Link>
                             <Link to="/login" className="btn btn-ghost">
                                 Log in

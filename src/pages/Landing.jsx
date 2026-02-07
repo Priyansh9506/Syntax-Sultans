@@ -137,12 +137,16 @@ export default function Landing() {
                 </div>
             </section>
 
-            {/* Features Section */}
-            <section className="features section">
+            {/* Features/USP Section */}
+            <section id="features" className="features section">
                 <div className="page-container">
                     <div className="section-header">
-                        <h2>Everything You Need</h2>
-                        <p>Powerful features to help you track and understand your form data</p>
+                        <div className="section-badge">
+                            <Zap size={14} />
+                            <span>Why Choose DataPulse</span>
+                        </div>
+                        <h2>Everything You Need to <span className="text-gradient">Track Smarter</span></h2>
+                        <p>Powerful features designed for developers who want simplicity without sacrificing capability</p>
                     </div>
 
                     <div className="features-grid">
@@ -155,6 +159,26 @@ export default function Landing() {
                                 <p>{feature.description}</p>
                             </div>
                         ))}
+                    </div>
+
+                    {/* USP Highlights */}
+                    <div className="usp-highlights">
+                        <div className="usp-item">
+                            <div className="usp-check"><Check size={18} /></div>
+                            <span>No backend required</span>
+                        </div>
+                        <div className="usp-item">
+                            <div className="usp-check"><Check size={18} /></div>
+                            <span>Works with any framework</span>
+                        </div>
+                        <div className="usp-item">
+                            <div className="usp-check"><Check size={18} /></div>
+                            <span>Free tier available</span>
+                        </div>
+                        <div className="usp-item">
+                            <div className="usp-check"><Check size={18} /></div>
+                            <span>GDPR compliant</span>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -221,7 +245,11 @@ export default function Landing() {
                         <div className="footer-links">
                             <div className="footer-column">
                                 <h4>Product</h4>
-                                <Link to="/#features">Features</Link>
+                                <a href="#features" onClick={(e) => {
+                                    e.preventDefault();
+                                    const el = document.getElementById('features');
+                                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                                }}>Features</a>
                                 <Link to="/subscription">Pricing</Link>
                                 <Link to="/integration">Documentation</Link>
                             </div>

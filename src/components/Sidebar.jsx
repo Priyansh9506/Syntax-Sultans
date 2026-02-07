@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, Link } from 'react-router-dom';
 import {
     LayoutDashboard,
     FolderKanban,
@@ -29,12 +29,12 @@ export default function Sidebar() {
 
     return (
         <aside className="sidebar">
-            <div className="sidebar-header">
+            <Link to="/" className="sidebar-header">
                 <div className="sidebar-logo">
                     <Activity size={24} />
                 </div>
                 <span className="sidebar-title">DataPulse</span>
-            </div>
+            </Link>
 
             <nav className="sidebar-nav">
                 <div className="sidebar-section">

@@ -48,13 +48,54 @@ export default function Submissions() {
         }
     };
 
-    const exportData = () => {
+    const exportJSON = () => {
         const dataStr = JSON.stringify(filteredSubmissions, null, 2);
         const dataBlob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(dataBlob);
         const link = document.createElement('a');
         link.href = url;
         link.download = `datapulse-submissions-${format(new Date(), 'yyyy-MM-dd')}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+    };
+
+    const exportCSV = () => {
+        if (filteredSubmissions.length === 0) return;
+
+        // Get all unique data keys from all submissions
+        const allDataKeys = new Set();
+        filteredSubmissions.forEach(sub => {
+            Object.keys(sub.data || {}).forEach(key => allDataKeys.add(key));
+        });
+        const dataKeys = Array.from(allDataKeys);
+
+        // Build CSV header
+        const headers = ['Timestamp', 'Project', 'Form ID', 'Page URL', ...dataKeys];
+
+        // Build CSV rows
+        const rows = filteredSubmissions.map(sub => {
+            const project = projects.find(p => p.id === sub.projectId);
+            const baseFields = [
+                format(new Date(sub.timestamp), 'yyyy-MM-dd HH:mm:ss'),
+                project?.name || 'Unknown',
+                sub.formId || 'N/A',
+                sub.pageUrl || ''
+            ];
+            const dataFields = dataKeys.map(key => {
+                const value = sub.data?.[key] ?? '';
+                // Escape quotes and wrap in quotes if contains comma
+                const strValue = String(value).replace(/"/g, '""');
+                return strValue.includes(',') ? `"${strValue}"` : strValue;
+            });
+            return [...baseFields, ...dataFields].join(',');
+        });
+
+        const csvContent = [headers.join(','), ...rows].join('\n');
+        const dataBlob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `datapulse-submissions-${format(new Date(), 'yyyy-MM-dd')}.csv`;
         link.click();
         URL.revokeObjectURL(url);
     };
@@ -74,10 +115,16 @@ export default function Submissions() {
                         <h1>Submissions</h1>
                         <p className="text-secondary">View and manage all form submissions</p>
                     </div>
-                    <button className="btn btn-secondary" onClick={exportData}>
-                        <Download size={18} />
-                        Export
-                    </button>
+                    <div className="export-buttons">
+                        <button className="btn btn-secondary" onClick={exportCSV}>
+                            <Download size={18} />
+                            CSV
+                        </button>
+                        <button className="btn btn-secondary" onClick={exportJSON}>
+                            <Download size={18} />
+                            JSON
+                        </button>
+                    </div>
                 </div>
 
                 {/* Filters */}
