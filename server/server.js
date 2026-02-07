@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 // Supabase client
 const supabase = createClient(
@@ -16,6 +16,15 @@ const supabase = createClient(
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Root health check
+app.get('/', (req, res) => {
+    res.json({
+        status: 'ok',
+        message: 'DataPulse API is running',
+        timestamp: new Date().toISOString()
+    });
+});
 
 // Helper functions
 const generateId = () => crypto.randomUUID();
