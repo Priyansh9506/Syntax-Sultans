@@ -1,11 +1,10 @@
-require('dotenv').config();
+require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const express = require('express');
 const cors = require('cors');
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
-const PORT = 3001;
 
 // Supabase client
 const supabase = createClient(
@@ -14,7 +13,10 @@ const supabase = createClient(
 );
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: true, // Allow all origins (configure this for production)
+    credentials: true
+}));
 app.use(express.json());
 
 // Helper functions
@@ -23,7 +25,7 @@ const generateApiKey = () => `dp_${crypto.randomBytes(16).toString('hex')}`;
 const generateToken = () => crypto.randomBytes(32).toString('hex');
 
 // In-memory token store: token -> userId mapping
-// In production, use Redis or database for token storage
+// Note: In serverless, this resets on cold start. Consider using database for production.
 const tokenStore = new Map();
 
 // ============================================
@@ -59,8 +61,6 @@ app.post('/api/auth/register', async (req, res) => {
         if (error) throw error;
 
         const token = generateToken();
-
-        // Store token -> userId mapping
         tokenStore.set(token, user.id);
         console.log(`[Auth] User registered: ${email} (ID: ${user.id})`);
 
@@ -90,8 +90,6 @@ app.post('/api/auth/login', async (req, res) => {
         }
 
         const token = generateToken();
-
-        // Store token -> userId mapping
         tokenStore.set(token, user.id);
         console.log(`[Auth] User logged in: ${email} (ID: ${user.id})`);
 
@@ -108,8 +106,6 @@ app.post('/api/auth/login', async (req, res) => {
 // ============================================
 // User Management Routes (require auth)
 // ============================================
-
-// Update profile (name)
 app.put('/api/auth/profile', async (req, res) => {
     try {
         const authHeader = req.headers.authorization;
@@ -141,7 +137,6 @@ app.put('/api/auth/profile', async (req, res) => {
     }
 });
 
-// Update password
 app.put('/api/auth/password', async (req, res) => {
     try {
         const authHeader = req.headers.authorization;
@@ -156,7 +151,6 @@ app.put('/api/auth/password', async (req, res) => {
 
         const { currentPassword, newPassword } = req.body;
 
-        // Verify current password
         const { data: user, error: fetchError } = await supabase
             .from('users')
             .select('*')
@@ -171,7 +165,6 @@ app.put('/api/auth/password', async (req, res) => {
             return res.status(400).json({ message: 'Current password is incorrect' });
         }
 
-        // Update password
         const { error } = await supabase
             .from('users')
             .update({ password: newPassword })
@@ -187,7 +180,6 @@ app.put('/api/auth/password', async (req, res) => {
     }
 });
 
-// Delete account
 app.delete('/api/auth/account', async (req, res) => {
     try {
         const authHeader = req.headers.authorization;
@@ -200,13 +192,11 @@ app.delete('/api/auth/account', async (req, res) => {
             return res.status(401).json({ message: 'Session expired, please login again' });
         }
 
-        // Delete user's projects (submissions will cascade or be orphaned depending on DB setup)
         await supabase
             .from('projects')
             .delete()
             .eq('user_id', userId);
 
-        // Delete user
         const { error } = await supabase
             .from('users')
             .delete()
@@ -214,7 +204,6 @@ app.delete('/api/auth/account', async (req, res) => {
 
         if (error) throw error;
 
-        // Remove token
         tokenStore.delete(token);
 
         console.log(`[Auth] Account deleted for user: ${userId}`);
@@ -236,20 +225,14 @@ const authMiddleware = async (req, res, next) => {
     }
 
     const token = authHeader.split(' ')[1];
-
-    // Check if token exists in our store
     const userId = tokenStore.get(token);
 
     if (userId) {
-        // Valid token - use the actual user
         req.userId = userId;
         console.log(`[Auth] Request authenticated for user: ${userId}`);
         return next();
     }
 
-    // Token not in store - check if it's a returning user by looking up in DB
-    // This handles cases where server restarted but user has valid session in frontend
-    // For now, reject invalid tokens (user needs to re-login after server restart)
     console.log(`[Auth] Invalid/expired token, user needs to re-login`);
     return res.status(401).json({ message: 'Session expired, please login again' });
 };
@@ -266,7 +249,6 @@ app.get('/api/projects', authMiddleware, async (req, res) => {
 
         if (error) throw error;
 
-        // Get submission counts
         const projectsWithCount = await Promise.all(
             (projects || []).map(async (p) => {
                 const { count } = await supabase
@@ -386,7 +368,6 @@ app.post('/api/track', async (req, res) => {
     try {
         const { apiKey, formId, data, pageUrl, userAgent } = req.body;
 
-        // Find project by API key
         const { data: project, error: projectError } = await supabase
             .from('projects')
             .select('id, name')
@@ -397,7 +378,6 @@ app.post('/api/track', async (req, res) => {
             return res.status(401).json({ message: 'Invalid API key' });
         }
 
-        // Insert submission with timestamp
         const { data: submission, error } = await supabase
             .from('submissions')
             .insert({
@@ -428,7 +408,6 @@ app.post('/api/track', async (req, res) => {
 // ============================================
 app.get('/api/submissions', authMiddleware, async (req, res) => {
     try {
-        // Get user's project IDs
         const { data: projects } = await supabase
             .from('projects')
             .select('id')
@@ -440,7 +419,6 @@ app.get('/api/submissions', authMiddleware, async (req, res) => {
             return res.json([]);
         }
 
-        // Get submissions for those projects
         const { data: submissions, error } = await supabase
             .from('submissions')
             .select('*')
@@ -483,81 +461,6 @@ app.get('/api/submissions/:id', authMiddleware, async (req, res) => {
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', database: 'supabase', timestamp: new Date().toISOString() });
 });
-
-// ============================================
-// Start Server
-// ============================================
-
-if (require.main === module) {
-    app.listen(PORT, async () => {
-        console.log(`
-  ╔════════════════════════════════════════════╗
-  ║                                            ║
-  ║   🚀 DataPulse API Server                  ║
-  ║   Running on http://localhost:${PORT}         ║
-  ║   Database: Supabase (PostgreSQL)          ║
-  ║                                            ║
-  ╚════════════════════════════════════════════╝
-  `);
-
-        // Create demo user and project if they don't exist
-        try {
-            const { data: existingUser } = await supabase
-                .from('users')
-                .select('id')
-                .eq('email', 'demo@datapulse.io')
-                .single();
-
-            if (!existingUser) {
-                // Create with proper UUIDs
-                const demoUserId = generateId();
-                const demoProjectId = generateId();
-
-                await supabase.from('users').insert({
-                    id: demoUserId,
-                    name: 'Demo User',
-                    email: 'demo@datapulse.io',
-                    password: 'demo123'
-                });
-
-                await supabase.from('projects').insert({
-                    id: demoProjectId,
-                    user_id: demoUserId,
-                    name: 'Demo Website',
-                    domain: 'demo.datapulse.io',
-                    api_key: 'dp_demo_key_12345'
-                });
-
-                console.log('  Demo data created in Supabase');
-            } else {
-                // Check if demo project exists
-                const { data: existingProject } = await supabase
-                    .from('projects')
-                    .select('id')
-                    .eq('api_key', 'dp_demo_key_12345')
-                    .single();
-
-                if (!existingProject) {
-                    await supabase.from('projects').insert({
-                        id: generateId(),
-                        user_id: existingUser.id,
-                        name: 'Demo Website',
-                        domain: 'demo.datapulse.io',
-                        api_key: 'dp_demo_key_12345'
-                    });
-                    console.log('  Demo project created');
-                } else {
-                    console.log('  Demo data already exists');
-                }
-            }
-        } catch (error) {
-            console.log('  Note: Run SQL schema in Supabase first');
-            console.log('  Error:', error.message);
-        }
-
-        console.log('');
-    });
-}
 
 // Export the app for Vercel
 module.exports = app;

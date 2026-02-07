@@ -3,7 +3,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 const AuthContext = createContext(null);
 
 // API Base URL
-const API_URL = 'http://localhost:3001/api';
+const API_URL = '/api';
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -25,12 +25,12 @@ export function AuthProvider({ children }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || 'Login failed');
       }
-      
+
       const data = await response.json();
       setUser(data.user);
       localStorage.setItem('datapulse_user', JSON.stringify(data.user));
@@ -48,12 +48,12 @@ export function AuthProvider({ children }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || 'Registration failed');
       }
-      
+
       const data = await response.json();
       setUser(data.user);
       localStorage.setItem('datapulse_user', JSON.stringify(data.user));
