@@ -12,7 +12,7 @@ import {
     Clock,
     ExternalLink
 } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, BarChart, Bar, Cell } from 'recharts';
 import { format } from 'date-fns';
 import './Dashboard.css';
 
@@ -39,6 +39,74 @@ export default function Dashboard() {
             last7Days.push({ name: dayStr, submissions: count });
         }
         return last7Days;
+    })();
+
+    // Peak hours chart data - group submissions by hour of day
+    const peakHoursData = (() => {
+        const hourCounts = {};
+        // Initialize all hours
+        for (let i = 0; i < 24; i++) {
+            hourCounts[i] = 0;
+        }
+        // Count submissions per hour
+        submissions.forEach(s => {
+            const hour = new Date(s.timestamp).getHours();
+            hourCounts[hour]++;
+        });
+        // Convert to chart data with formatted labels
+        return Object.entries(hourCounts).map(([hour, count]) => {
+            const h = parseInt(hour);
+            const period = h >= 12 ? 'PM' : 'AM';
+            const displayHour = h === 0 ? 12 : h > 12 ? h - 12 : h;
+            return {
+                hour: `${displayHour}${period}`,
+                submissions: count,
+                fullHour: h
+            };
+        });
+    })();
+
+    // Find peak hour for highlighting
+    const maxSubmissions = Math.max(...peakHoursData.map(d => d.submissions));
+
+    // Day of week chart data - group submissions by day of week
+    const dayOfWeekData = (() => {
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const dayCounts = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+
+        submissions.forEach(s => {
+            const day = new Date(s.timestamp).getDay();
+            dayCounts[day]++;
+        });
+
+        return days.map((name, index) => ({
+            day: name,
+            submissions: dayCounts[index],
+            isWeekend: index === 0 || index === 6
+        }));
+    })();
+
+    // Find busiest day
+    const maxDaySubmissions = Math.max(...dayOfWeekData.map(d => d.submissions));
+    const busiestDay = dayOfWeekData.find(d => d.submissions === maxDaySubmissions);
+
+    // Average interactions calculation
+    const averageStats = (() => {
+        if (submissions.length === 0) {
+            return { daily: 0, weekly: 0, monthly: 0 };
+        }
+
+        // Get date range
+        const dates = submissions.map(s => new Date(s.timestamp));
+        const minDate = new Date(Math.min(...dates));
+        const maxDate = new Date(Math.max(...dates));
+        const daysDiff = Math.max(1, Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24)) + 1);
+
+        const daily = (submissions.length / daysDiff).toFixed(1);
+        const weekly = (submissions.length / Math.max(1, daysDiff / 7)).toFixed(1);
+        const monthly = (submissions.length / Math.max(1, daysDiff / 30)).toFixed(1);
+
+        return { daily, weekly, monthly };
     })();
 
     // Recent submissions
@@ -202,6 +270,151 @@ export default function Dashboard() {
                             </div>
                         )}
                     </div>
+                </div>
+
+                {/* Peak Hours Analytics */}
+                <div className="peak-hours-section card">
+                    <div className="card-header">
+                        <h3>⏰ Peak Activity Hours</h3>
+                        <span className="text-muted">When users prefer to visit</span>
+                    </div>
+                    <div className="peak-hours-chart-container">
+                        <ResponsiveContainer width="100%" height={200}>
+                            <BarChart data={peakHoursData}>
+                                <XAxis
+                                    dataKey="hour"
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fill: '#64748b', fontSize: 10 }}
+                                    interval={2}
+                                />
+                                <YAxis
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fill: '#64748b', fontSize: 12 }}
+                                />
+                                <Tooltip
+                                    contentStyle={{
+                                        background: '#1a1a25',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: '8px',
+                                        color: '#f8fafc'
+                                    }}
+                                    formatter={(value) => [value, 'Submissions']}
+                                    labelFormatter={(label) => `Time: ${label}`}
+                                />
+                                <Bar dataKey="submissions" radius={[4, 4, 0, 0]}>
+                                    {peakHoursData.map((entry, index) => (
+                                        <Cell
+                                            key={`cell-${index}`}
+                                            fill={entry.submissions === maxSubmissions && maxSubmissions > 0
+                                                ? '#22c55e'
+                                                : '#6366f1'
+                                            }
+                                            fillOpacity={entry.submissions === maxSubmissions && maxSubmissions > 0
+                                                ? 1
+                                                : 0.7
+                                            }
+                                        />
+                                    ))}
+                                </Bar>
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                    {maxSubmissions > 0 && (
+                        <div className="peak-hours-insight">
+                            <span className="peak-badge">🔥 Peak Hour</span>
+                            <span>
+                                Most activity at <strong>{peakHoursData.find(d => d.submissions === maxSubmissions)?.hour}</strong>
+                            </span>
+                        </div>
+                    )}
+                </div>
+
+                {/* Average Interactions Stats */}
+                <div className="average-stats-section">
+                    <h3>📊 Average Interactions</h3>
+                    <div className="average-stats-grid">
+                        <div className="average-stat-card card">
+                            <div className="average-stat-value">{averageStats.daily}</div>
+                            <div className="average-stat-label">Per Day</div>
+                            <div className="average-stat-sublabel">Daily average</div>
+                        </div>
+                        <div className="average-stat-card card">
+                            <div className="average-stat-value">{averageStats.weekly}</div>
+                            <div className="average-stat-label">Per Week</div>
+                            <div className="average-stat-sublabel">Weekly average</div>
+                        </div>
+                        <div className="average-stat-card card">
+                            <div className="average-stat-value">{averageStats.monthly}</div>
+                            <div className="average-stat-label">Per Month</div>
+                            <div className="average-stat-sublabel">Monthly average</div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Day of Week Analytics */}
+                <div className="day-of-week-section card">
+                    <div className="card-header">
+                        <h3>📅 Activity by Day of Week</h3>
+                        <span className="text-muted">Which days are busiest</span>
+                    </div>
+                    <div className="day-of-week-chart-container">
+                        <ResponsiveContainer width="100%" height={200}>
+                            <BarChart data={dayOfWeekData}>
+                                <XAxis
+                                    dataKey="day"
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fill: '#64748b', fontSize: 12 }}
+                                />
+                                <YAxis
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fill: '#64748b', fontSize: 12 }}
+                                />
+                                <Tooltip
+                                    contentStyle={{
+                                        background: '#1a1a25',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: '8px',
+                                        color: '#f8fafc'
+                                    }}
+                                    formatter={(value) => [value, 'Submissions']}
+                                />
+                                <Bar dataKey="submissions" radius={[4, 4, 0, 0]}>
+                                    {dayOfWeekData.map((entry, index) => (
+                                        <Cell
+                                            key={`day-cell-${index}`}
+                                            fill={entry.submissions === maxDaySubmissions && maxDaySubmissions > 0
+                                                ? '#f59e0b'
+                                                : entry.isWeekend
+                                                    ? '#8b5cf6'
+                                                    : '#6366f1'
+                                            }
+                                            fillOpacity={entry.submissions === maxDaySubmissions && maxDaySubmissions > 0
+                                                ? 1
+                                                : 0.7
+                                            }
+                                        />
+                                    ))}
+                                </Bar>
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                    {maxDaySubmissions > 0 && busiestDay && (
+                        <div className="day-of-week-insight">
+                            <span className="day-badge">📈 Busiest Day</span>
+                            <span>
+                                Most submissions on <strong>{busiestDay.day === 'Sun' ? 'Sunday' :
+                                    busiestDay.day === 'Mon' ? 'Monday' :
+                                        busiestDay.day === 'Tue' ? 'Tuesday' :
+                                            busiestDay.day === 'Wed' ? 'Wednesday' :
+                                                busiestDay.day === 'Thu' ? 'Thursday' :
+                                                    busiestDay.day === 'Fri' ? 'Friday' : 'Saturday'}</strong>
+                            </span>
+                        </div>
+                    )}
                 </div>
 
                 {/* Quick Actions */}
