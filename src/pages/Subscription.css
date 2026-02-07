@@ -1,0 +1,1075 @@
+/* Subscription Page - Premium Sophisticated Design */
+
+.subscription-page {
+    min-height: 100vh;
+    background: var(--color-bg-primary);
+    overflow-x: hidden;
+}
+
+/* ============================================
+   HERO SECTION - Premium Glass Effect
+   ============================================ */
+.subscription-hero {
+    position: relative;
+    padding: calc(var(--navbar-height) + 80px) var(--space-xl) 60px;
+    text-align: center;
+    overflow: hidden;
+}
+
+.subscription-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1000px;
+    height: 1000px;
+    background: conic-gradient(from 0deg,
+            rgba(99, 102, 241, 0.3),
+            rgba(139, 92, 246, 0.2),
+            rgba(168, 85, 247, 0.3),
+            rgba(139, 92, 246, 0.2),
+            rgba(99, 102, 241, 0.3));
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.4;
+    animation: rotateGlow 20s linear infinite;
+}
+
+@keyframes rotateGlow {
+    from {
+        transform: translateX(-50%) rotate(0deg);
+    }
+
+    to {
+        transform: translateX(-50%) rotate(360deg);
+    }
+}
+
+.subscription-hero .hero-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.subscription-hero .hero-gradient {
+    position: absolute;
+    top: -60%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200%;
+    height: 120%;
+    background: radial-gradient(ellipse at center top, rgba(99, 102, 241, 0.2) 0%, transparent 60%);
+}
+
+.subscription-hero .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent 70%);
+}
+
+/* Floating particles */
+.subscription-hero::after {
+    content: '';
+    position: absolute;
+    top: 20%;
+    right: 10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: float 8s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-30px) scale(1.1);
+    }
+}
+
+.subscription-hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.subscription-hero-content .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-accent-primary);
+    margin-bottom: var(--space-lg);
+    backdrop-filter: blur(10px);
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.subscription-hero-content h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: var(--space-lg);
+    line-height: 1.1;
+    animation: fadeInUp 0.6s ease 0.1s forwards;
+    opacity: 0;
+}
+
+.subscription-hero-content h1 .text-gradient {
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.subscription-hero-content .hero-description {
+    font-size: 1.25rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-2xl);
+    line-height: 1.7;
+    animation: fadeInUp 0.6s ease 0.2s forwards;
+    opacity: 0;
+}
+
+/* ============================================
+   BILLING TOGGLE - Premium Glass Design
+   ============================================ */
+.billing-toggle {
+    display: inline-flex;
+    gap: 4px;
+    padding: 6px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    animation: fadeInUp 0.6s ease 0.3s forwards;
+    opacity: 0;
+}
+
+.toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--color-text-muted);
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-btn:hover {
+    color: var(--color-text-primary);
+}
+
+.toggle-btn.active {
+    color: white;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    box-shadow:
+        0 4px 20px rgba(99, 102, 241, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transform: scale(1.02);
+}
+
+.save-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+    color: white;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 10px rgba(34, 197, 94, 0.4);
+}
+
+/* ============================================
+   PRICING SECTION - Glass Cards
+   ============================================ */
+.pricing-section {
+    padding: 80px 0 100px;
+    position: relative;
+}
+
+.pricing-section::before {
+    content: '';
+    position: absolute;
+    left: -200px;
+    top: 50%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    max-width: 1300px;
+    margin: 0 auto;
+    perspective: 1000px;
+}
+
+/* ============================================
+   PRICING CARD - Premium Glass Effect
+   ============================================ */
+.pricing-card {
+    position: relative;
+    background: linear-gradient(180deg,
+            rgba(255, 255, 255, 0.05) 0%,
+            rgba(255, 255, 255, 0.02) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(20px);
+    overflow: hidden;
+}
+
+.pricing-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.pricing-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 60%, rgba(99, 102, 241, 0.03) 100%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.pricing-card:hover {
+    transform: translateY(-12px);
+    border-color: rgba(99, 102, 241, 0.3);
+    box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.5),
+        0 0 60px rgba(99, 102, 241, 0.15);
+}
+
+.pricing-card:hover::after {
+    opacity: 1;
+}
+
+/* Popular Card - Special Treatment */
+.pricing-card.popular {
+    border-color: rgba(99, 102, 241, 0.5);
+    background: linear-gradient(180deg,
+            rgba(99, 102, 241, 0.15) 0%,
+            rgba(139, 92, 246, 0.05) 50%,
+            rgba(255, 255, 255, 0.03) 100%);
+    transform: scale(1.08);
+    z-index: 2;
+}
+
+.pricing-card.popular::before {
+    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.5), transparent);
+}
+
+.pricing-card.popular:hover {
+    transform: scale(1.08) translateY(-12px);
+    box-shadow:
+        0 30px 60px -12px rgba(0, 0, 0, 0.6),
+        0 0 80px rgba(99, 102, 241, 0.25);
+}
+
+.popular-badge {
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 24px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: white;
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.5);
+}
+
+/* Card Header */
+.pricing-card-header {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+}
+
+.plan-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 20px;
+    color: var(--color-accent-primary);
+    transition: all 0.3s;
+}
+
+.pricing-card:hover .plan-icon {
+    transform: scale(1.1) rotate(5deg);
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    color: white;
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+}
+
+.pricing-card-header h3 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+}
+
+.plan-description {
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+}
+
+/* Pricing Display */
+.pricing-card-price {
+    text-align: center;
+    margin-bottom: 8px;
+    padding: 20px 0;
+}
+
+.pricing-card-price .currency {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    vertical-align: top;
+    position: relative;
+    top: 8px;
+}
+
+.pricing-card-price .amount {
+    font-size: 5rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    background: linear-gradient(180deg, #ffffff 0%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.pricing-card.popular .pricing-card-price .amount {
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.pricing-card-price .period {
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+}
+
+.yearly-note {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-lg);
+    padding: 8px 16px;
+    background: rgba(34, 197, 94, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+/* Features List */
+.features-list {
+    list-style: none;
+    padding: 28px 0;
+    margin-bottom: auto;
+    flex: 1;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.features-list li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    font-size: 0.95rem;
+    transition: transform 0.2s;
+}
+
+.features-list li:hover {
+    transform: translateX(5px);
+}
+
+.features-list li.included {
+    color: var(--color-text-primary);
+}
+
+.features-list li.excluded {
+    color: var(--color-text-muted);
+    opacity: 0.6;
+}
+
+.feature-icon {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.feature-icon.check {
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.15);
+}
+
+.feature-icon.x {
+    color: var(--color-text-muted);
+    background: rgba(100, 116, 139, 0.1);
+}
+
+/* CTA Button in Card */
+.pricing-card .btn {
+    margin-top: 20px;
+    padding: 18px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 14px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pricing-card .btn-primary {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    box-shadow:
+        0 4px 15px rgba(99, 102, 241, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.pricing-card .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 8px 25px rgba(99, 102, 241, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.pricing-card .btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pricing-card .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(99, 102, 241, 0.5);
+}
+
+/* ============================================
+   COMPARISON SECTION
+   ============================================ */
+.comparison-section {
+    padding: 100px 0;
+    background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-bg-primary) 100%);
+    position: relative;
+}
+
+.comparison-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-header h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+}
+
+.section-header p {
+    font-size: 1.15rem;
+    color: var(--color-text-secondary);
+}
+
+.comparison-table-wrapper {
+    overflow-x: auto;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(10px);
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.comparison-table th,
+.comparison-table td {
+    padding: 20px 28px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.2s;
+}
+
+.comparison-table tr:hover td {
+    background: rgba(99, 102, 241, 0.03);
+}
+
+.comparison-table th:first-child,
+.comparison-table td:first-child {
+    text-align: left;
+    font-weight: 500;
+    color: var(--color-text-primary);
+}
+
+.comparison-table th {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    background: rgba(255, 255, 255, 0.03);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.comparison-table th.highlight {
+    background: rgba(99, 102, 241, 0.15);
+    color: var(--color-accent-primary);
+}
+
+.comparison-table td.highlight {
+    background: rgba(99, 102, 241, 0.08);
+    font-weight: 600;
+}
+
+.comparison-table .icon-check {
+    color: #22c55e;
+    display: inline-flex;
+    justify-content: flex-end;
+}
+
+.comparison-table .icon-x {
+    color: var(--color-text-muted);
+    opacity: 0.5;
+    display: inline-flex;
+    justify-content: flex-end;
+}
+
+/* Center icons in table cells */
+.comparison-table td:not(:first-child) {
+    text-align: center;
+}
+
+.comparison-table td svg {
+    margin: 0 auto;
+}
+
+/* ============================================
+   FAQ SECTION
+   ============================================ */
+.faq-section {
+    padding: 100px 0;
+}
+
+.faq-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.03) 0%,
+            rgba(255, 255, 255, 0.01) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 18px;
+    padding: 24px 28px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.faq-item:hover {
+    border-color: rgba(99, 102, 241, 0.3);
+    background: rgba(99, 102, 241, 0.05);
+    transform: translateY(-2px);
+}
+
+.faq-item.expanded {
+    border-color: rgba(99, 102, 241, 0.5);
+    background: linear-gradient(135deg,
+            rgba(99, 102, 241, 0.08) 0%,
+            rgba(139, 92, 246, 0.05) 100%);
+}
+
+.faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.faq-question h4 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.faq-toggle {
+    font-size: 1.75rem;
+    font-weight: 300;
+    color: var(--color-accent-primary);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 10px;
+    transition: all 0.3s;
+}
+
+.faq-item.expanded .faq-toggle {
+    transform: rotate(45deg);
+    background: var(--color-accent-primary);
+    color: white;
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.faq-item.expanded .faq-answer {
+    max-height: 250px;
+    padding-top: 20px;
+}
+
+.faq-answer p {
+    font-size: 0.95rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+}
+
+/* ============================================
+   CTA SECTION
+   ============================================ */
+.subscription-page .cta {
+    padding: 80px 0 100px;
+}
+
+.subscription-page .cta-card {
+    text-align: center;
+    padding: 80px 60px;
+    background: linear-gradient(135deg,
+            rgba(99, 102, 241, 0.1) 0%,
+            rgba(139, 92, 246, 0.05) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 32px;
+    position: relative;
+    overflow: hidden;
+}
+
+.subscription-page .cta-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg,
+            transparent,
+            rgba(99, 102, 241, 0.1),
+            transparent 30%);
+    animation: rotateGlow 15s linear infinite;
+}
+
+.subscription-page .cta-card h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: var(--space-md);
+    position: relative;
+}
+
+.subscription-page .cta-card p {
+    font-size: 1.2rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-xl);
+    position: relative;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+.cta-buttons .btn-primary {
+    padding: 18px 36px;
+    font-size: 1.05rem;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.subscription-page .footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 40px 0;
+    background: var(--color-bg-secondary);
+}
+
+.subscription-page .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.subscription-page .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--color-text-primary);
+}
+
+.subscription-page .footer-logo svg {
+    color: var(--color-accent-primary);
+}
+
+.subscription-page .footer-bottom p {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+}
+
+.subscription-page .footer-content {
+    display: flex;
+    justify-content: space-between;
+    gap: 60px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 30px;
+}
+
+.subscription-page .footer-brand {
+    max-width: 280px;
+}
+
+.subscription-page .footer-brand p {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    margin-top: 12px;
+    line-height: 1.6;
+}
+
+.subscription-page .footer-links {
+    display: flex;
+    gap: 80px;
+}
+
+.subscription-page .footer-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.subscription-page .footer-column h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.subscription-page .footer-column a {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.subscription-page .footer-column a:hover {
+    color: var(--color-accent-primary);
+}
+
+/* ============================================
+   TRUST SECTION
+   ============================================ */
+.trust-section {
+    padding: 60px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: linear-gradient(180deg, rgba(99, 102, 241, 0.03) 0%, transparent 100%);
+}
+
+.trust-grid {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    flex-wrap: wrap;
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 30px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    transition: all 0.3s;
+}
+
+.trust-item:hover {
+    background: rgba(99, 102, 241, 0.08);
+    border-color: rgba(99, 102, 241, 0.3);
+    transform: translateY(-3px);
+}
+
+.trust-item svg {
+    color: var(--color-accent-primary);
+    flex-shrink: 0;
+}
+
+.trust-item h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.trust-item p {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin: 0;
+}
+
+/* ============================================
+   TESTIMONIALS SECTION
+   ============================================ */
+.testimonials-section {
+    padding: 100px 0;
+    background: var(--color-bg-primary);
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+}
+
+.testimonial-card {
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.04) 0%,
+            rgba(255, 255, 255, 0.01) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 20px;
+    padding: 32px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.testimonial-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(99, 102, 241, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.testimonial-stars {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+}
+
+.testimonial-content {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+    margin-bottom: 24px;
+    font-style: italic;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.testimonial-avatar {
+    font-size: 2.5rem;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+    border-radius: 14px;
+}
+
+.testimonial-author h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.testimonial-author p {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin: 0;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 1200px) {
+    .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 480px;
+        gap: 40px;
+    }
+
+    .pricing-card.popular {
+        transform: none;
+    }
+
+    .pricing-card.popular:hover {
+        transform: translateY(-12px);
+    }
+
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 900px) {
+    .faq-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .trust-grid {
+        gap: 20px;
+    }
+
+    .trust-item {
+        padding: 16px 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .subscription-hero {
+        padding-top: calc(var(--navbar-height) + 60px);
+    }
+
+    .subscription-hero-content h1 {
+        font-size: 2.5rem;
+    }
+
+    .subscription-hero-content .hero-description {
+        font-size: 1rem;
+    }
+
+    .billing-toggle {
+        flex-direction: column;
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .toggle-btn {
+        justify-content: center;
+    }
+
+    .pricing-card-price .amount {
+        font-size: 4rem;
+    }
+
+    .section-header h2 {
+        font-size: 1.75rem;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+        padding: 14px 16px;
+        font-size: 0.85rem;
+    }
+
+    .subscription-page .cta-card {
+        padding: 50px 30px;
+    }
+
+    .subscription-page .cta-card h2 {
+        font-size: 1.75rem;
+    }
+
+    .subscription-page .footer-bottom {
+        flex-direction: column;
+        gap: var(--space-md);
+        text-align: center;
+    }
+
+    .trust-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .trust-item {
+        width: 100%;
+        max-width: 320px;
+    }
+}

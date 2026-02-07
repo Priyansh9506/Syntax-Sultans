@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Projects from './pages/Projects';
 import Submissions from './pages/Submissions';
 import Integration from './pages/Integration';
+import Subscription from './pages/Subscription';
 
 // Import global styles
 import './index.css';
@@ -42,6 +43,7 @@ function AppRoutes() {
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<Landing />} />
+      <Route path="/subscription" element={<Subscription />} />
       <Route
         path="/login"
         element={user ? <Navigate to="/dashboard" replace /> : <Login />}

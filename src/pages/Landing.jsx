@@ -221,27 +221,28 @@ export default function Landing() {
                         <div className="footer-links">
                             <div className="footer-column">
                                 <h4>Product</h4>
-                                <a href="#">Features</a>
-                                <a href="#">Pricing</a>
-                                <a href="#">Documentation</a>
+                                <Link to="/#features">Features</Link>
+                                <Link to="/subscription">Pricing</Link>
+                                <Link to="/integration">Documentation</Link>
                             </div>
                             <div className="footer-column">
-                                <h4>Company</h4>
-                                <a href="#">About</a>
-                                <a href="#">Blog</a>
-                                <a href="#">Careers</a>
+                                <h4>Account</h4>
+                                <Link to="/login">Sign In</Link>
+                                <Link to="/register">Sign Up</Link>
+                                <Link to="/dashboard">Dashboard</Link>
                             </div>
                             <div className="footer-column">
-                                <h4>Legal</h4>
-                                <a href="#">Privacy</a>
-                                <a href="#">Terms</a>
+                                <h4>Resources</h4>
+                                <Link to="/integration">Integration Guide</Link>
+                                <Link to="/projects">Projects</Link>
+                                <Link to="/submissions">Submissions</Link>
                             </div>
                         </div>
                     </div>
 
                     <div className="footer-bottom">
                         <p>&copy; 2026 DataPulse. All rights reserved.</p>
-                        <a href="https://github.com" className="footer-social">
+                        <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="footer-social">
                             <Github size={20} />
                         </a>
                     </div>
