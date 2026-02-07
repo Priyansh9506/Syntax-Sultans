@@ -22,6 +22,10 @@ const generateId = () => crypto.randomUUID();
 const generateApiKey = () => `dp_${crypto.randomBytes(16).toString('hex')}`;
 const generateToken = () => crypto.randomBytes(32).toString('hex');
 
+// In-memory token store: token -> userId mapping
+// In production, use Redis or database for token storage
+const tokenStore = new Map();
+
 // ============================================
 // Auth Routes
 // ============================================
@@ -56,6 +60,10 @@ app.post('/api/auth/register', async (req, res) => {
 
         const token = generateToken();
 
+        // Store token -> userId mapping
+        tokenStore.set(token, user.id);
+        console.log(`[Auth] User registered: ${email} (ID: ${user.id})`);
+
         res.status(201).json({
             user: { id: user.id, name: user.name, email: user.email, createdAt: user.created_at },
             token,
@@ -83,6 +91,10 @@ app.post('/api/auth/login', async (req, res) => {
 
         const token = generateToken();
 
+        // Store token -> userId mapping
+        tokenStore.set(token, user.id);
+        console.log(`[Auth] User logged in: ${email} (ID: ${user.id})`);
+
         res.json({
             user: { id: user.id, name: user.name, email: user.email, createdAt: user.created_at },
             token,
@@ -103,35 +115,23 @@ const authMiddleware = async (req, res, next) => {
         return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    // For demo, accept demo token
     const token = authHeader.split(' ')[1];
 
-    // Get demo user by email
-    let { data: user } = await supabase
-        .from('users')
-        .select('id')
-        .eq('email', 'demo@datapulse.io')
-        .single();
+    // Check if token exists in our store
+    const userId = tokenStore.get(token);
 
-    if (user) {
-        req.userId = user.id;
-    } else {
-        // Create demo user with proper UUID
-        const demoUserId = generateId();
-        const { data: newUser } = await supabase
-            .from('users')
-            .insert({
-                id: demoUserId,
-                name: 'Demo User',
-                email: 'demo@datapulse.io',
-                password: 'demo123'
-            })
-            .select()
-            .single();
-        req.userId = newUser?.id || demoUserId;
+    if (userId) {
+        // Valid token - use the actual user
+        req.userId = userId;
+        console.log(`[Auth] Request authenticated for user: ${userId}`);
+        return next();
     }
 
-    next();
+    // Token not in store - check if it's a returning user by looking up in DB
+    // This handles cases where server restarted but user has valid session in frontend
+    // For now, reject invalid tokens (user needs to re-login after server restart)
+    console.log(`[Auth] Invalid/expired token, user needs to re-login`);
+    return res.status(401).json({ message: 'Session expired, please login again' });
 };
 
 // ============================================
