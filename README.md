@@ -319,12 +319,24 @@ This project was built with **AI pair programming**:
 
 ---
 
-## 👥 Team
+## 👥 The Creators
 
 <h3 align="center">⚡ SYNTAX SULTANS ⚡</h3>
 
 <p align="center">
-  <strong>ACM Hackathon 2026</strong>
+  <strong>DataPulse</strong> was crafted with passion by
+  <br>
+  <strong>Priyansh</strong> & <strong>Kaivalya Bhatt</strong>
+</p>
+
+<p align="center">
+  Developed during the
+  <br>
+  <strong>ACM Nirma University Chapter Hackathon: Prompt to Prototype</strong>
+</p>
+
+<p align="center">
+  <em>Where innovation meets implementation.</em>
 </p>
 
 ---
@@ -352,7 +364,7 @@ This project was built with **AI pair programming**:
 ---
 
 <p align="center">
-  <strong>Built with 💜 for ACM Hackathon 2026</strong>
+  <strong>Built with 💜 for ACM Nirma University Chapter Hackathon: Prompt to Prototype</strong>
 </p>
 
 <p align="center">
