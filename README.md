@@ -1,124 +1,324 @@
-# DataPulse
+<p align="center">
+  <img src="https://img.shields.io/badge/🚀-DataPulse-6366f1?style=for-the-badge&labelColor=0a0a0f" alt="DataPulse"/>
+</p>
 
-**Universal Website Data Tracking & Intelligence SaaS**
+<h1 align="center">
+  <br>
+  📊 DataPulse
+  <br>
+</h1>
 
-A modern platform that allows developers to integrate form tracking into their websites without requiring deep technical expertise. Built with React, Express.js, and Supabase.
+<h3 align="center">
+  <em>Universal Website Data Tracking & Intelligence Platform</em>
+</h3>
+
+<p align="center">
+  <strong>Track every form submission. Zero complexity. Infinite insights.</strong>
+</p>
+
+<p align="center">
+  <a href="#-features">Features</a> •
+  <a href="#-demo">Demo</a> •
+  <a href="#-tech-stack">Tech Stack</a> •
+  <a href="#-quick-start">Quick Start</a> •
+  <a href="#-architecture">Architecture</a> •
+  <a href="#-team">Team</a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=white" alt="React"/>
+  <img src="https://img.shields.io/badge/Express.js-4.x-000000?style=flat-square&logo=express&logoColor=white" alt="Express"/>
+  <img src="https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=flat-square&logo=supabase&logoColor=white" alt="Supabase"/>
+  <img src="https://img.shields.io/badge/Vite-7.x-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite"/>
+</p>
+
+---
+
+## 🎯 The Problem
+
+> **Every day, businesses lose valuable customer data because form tracking is too complex.**
+
+Traditional analytics tools require:
+- 😰 Complex SDK integrations
+- 📚 Extensive documentation reading
+- 👨‍💻 Dedicated developer resources
+- 💰 Expensive enterprise subscriptions
+
+**Result?** Small businesses and indie developers miss out on crucial form submission data.
+
+---
+
+## 💡 Our Solution
+
+**DataPulse** is a plug-and-play form tracking platform that captures every submission with just **one line of code**.
+
+```html
+<script src="datapulse.js" data-key="YOUR_KEY"></script>
+<!-- That's it. You're done. 🎉 -->
+```
+
+---
+
+## ✨ Features
+
+<table>
+<tr>
+<td width="50%">
+
+### 🎨 Beautiful Dashboard
+Modern, dark-themed interface with glassmorphism effects. Real-time stats, interactive charts, and intuitive navigation.
+
+### 📊 Real-Time Analytics
+Watch form submissions appear instantly in your dashboard. No delays, no refresh needed.
+
+### 🔐 Secure by Design
+- API key authentication
+- Automatic password redaction
+- PostgreSQL with Supabase
+
+</td>
+<td width="50%">
+
+### 🚀 One-Line Integration
+Add tracking to any website in seconds. Works with React, Vue, vanilla HTML, WordPress—everything.
+
+### 📁 Project Management
+Create unlimited projects, each with unique API keys. Organize by website or client.
+
+### 📤 Data Export
+Export all submissions as JSON. Filter by date, form, or custom criteria.
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🎬 Demo
+
+### Live Dashboard Preview
+
+| Dashboard | Projects | Submissions |
+|-----------|----------|-------------|
+| 📈 Stats & Charts | 🗂️ Manage Sites | 📋 View Data |
+| Real-time metrics | API key generation | Filter & export |
+| Recent activity | Domain tracking | Detailed view |
+
+### Integration Flow
+
+```
+┌──────────────────┐     ┌──────────────────┐     ┌──────────────────┐
+│  1. Add Script   │ ──▶ │  2. User Submits │ ──▶ │  3. See in       │
+│  to your site    │     │  any form        │     │  Dashboard       │
+└──────────────────┘     └──────────────────┘     └──────────────────┘
+      5 seconds              automatic              instant
+```
+
+---
+
+## 🛠️ Tech Stack
+
+<table>
+<tr>
+<td align="center" width="96">
+<img src="https://skillicons.dev/icons?i=react" width="48" height="48" alt="React" />
+<br>React 19
+</td>
+<td align="center" width="96">
+<img src="https://skillicons.dev/icons?i=vite" width="48" height="48" alt="Vite" />
+<br>Vite
+</td>
+<td align="center" width="96">
+<img src="https://skillicons.dev/icons?i=express" width="48" height="48" alt="Express" />
+<br>Express
+</td>
+<td align="center" width="96">
+<img src="https://skillicons.dev/icons?i=supabase" width="48" height="48" alt="Supabase" />
+<br>Supabase
+</td>
+<td align="center" width="96">
+<img src="https://skillicons.dev/icons?i=postgres" width="48" height="48" alt="PostgreSQL" />
+<br>PostgreSQL
+</td>
+<td align="center" width="96">
+<img src="https://skillicons.dev/icons?i=js" width="48" height="48" alt="JavaScript" />
+<br>JavaScript
+</td>
+</tr>
+</table>
+
+| Layer | Technology | Why We Chose It |
+|-------|------------|-----------------|
+| **Frontend** | React 19 + Vite | Blazing fast HMR, latest React features |
+| **Styling** | Custom CSS | Full design control, dark theme, glassmorphism |
+| **Charts** | Recharts | Beautiful, responsive data visualization |
+| **Backend** | Express.js | Lightweight, fast, perfect for REST APIs |
+| **Database** | Supabase | PostgreSQL power with real-time capabilities |
+| **Tracking SDK** | Vanilla JS | Zero dependencies, ~2KB, works everywhere |
+
+---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Node.js 18+
-- npm
-- Supabase account (free tier)
+- Supabase account (free tier works!)
 
 ### Installation
 
-1. **Install frontend dependencies:**
 ```bash
+# Clone the repository
+git clone https://github.com/Priyansh9506/Syntax-Sultans.git
+
+# Install frontend dependencies
 cd "Data Pluse"
 npm install
-```
 
-2. **Install backend dependencies:**
-```bash
+# Install backend dependencies
 cd server
 npm install
 ```
 
-3. **Set up Supabase:**
-   - Create a project at https://supabase.com
-   - Run `schema.sql` in the SQL Editor
-   - Copy your credentials to `server/.env`
+### Setup Supabase
 
-### Running the Application
-
-1. **Start the backend API server:**
-```bash
-cd server
-node server.js
+1. Create project at [supabase.com](https://supabase.com)
+2. Run `schema.sql` in SQL Editor
+3. Add credentials to `server/.env`:
+```env
+SUPABASE_URL=your-project-url
+SUPABASE_KEY=your-anon-key
 ```
-API runs on http://localhost:3001
 
-2. **Start the frontend:**
+### Run
+
 ```bash
+# Terminal 1: Backend
+cd server && node server.js
+# ✅ Running on http://localhost:3001
+
+# Terminal 2: Frontend
 npm run dev
-```
-App runs on http://localhost:5173
-
-3. **Test with demo forms:**
-Open `demo-website/index.html` in your browser
-
-## 📱 Features
-
-- **Modern Dashboard** - Real-time stats, charts, recent activity
-- **Project Management** - Create/manage tracked websites with API keys
-- **Form Submissions** - View, filter, export captured form data
-- **Easy Integration** - Simple JavaScript snippet
-- **Supabase Backend** - Persistent PostgreSQL storage
-- **Demo Mode** - Try without signing up
-
-## 🏗️ Tech Stack
-
-| Layer | Technology |
-|-------|------------|
-| Frontend | React 19 + Vite |
-| Styling | Vanilla CSS |
-| Charts | Recharts |
-| Icons | Lucide React |
-| Backend | Express.js |
-| Database | Supabase (PostgreSQL) |
-| SDK | Vanilla JavaScript (~2KB) |
-
-## 📖 Integration
-
-Add this to your website before `</body>`:
-
-```html
-<script>
-(function(d,p,k){
-  var s=d.createElement('script');
-  s.src='YOUR_DATAPULSE_URL/datapulse.js';
-  s.dataset.key='YOUR_API_KEY';
-  s.dataset.url='YOUR_API_URL/api/track';
-  s.async=true;
-  d.head.appendChild(s);
-})(document,'datapulse','YOUR_API_KEY');
-</script>
+# ✅ Running on http://localhost:5173
 ```
 
-See [INTEGRATION.md](./INTEGRATION.md) for full guide.
+---
 
-## 📁 Project Structure
-
-```
-Data Pluse/
-├── public/datapulse.js     # Tracking SDK
-├── server/
-│   ├── server.js           # Express API
-│   ├── schema.sql          # Database schema
-│   └── .env                # Supabase credentials
-├── src/
-│   ├── components/         # Navbar, Sidebar
-│   ├── context/            # Auth, Data providers
-│   ├── pages/              # All page components
-│   └── index.css           # Design system
-└── demo-website/           # Test forms
+## 🏗️ Architecture
 
 ```
+┌─────────────────────────────────────────────────────────────────┐
+│                     CLIENT WEBSITES                              │
+│    ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐          │
+│    │ Site 1  │  │ Site 2  │  │ Site 3  │  │ Site N  │          │
+│    │ +SDK    │  │ +SDK    │  │ +SDK    │  │ +SDK    │          │
+│    └────┬────┘  └────┬────┘  └────┬────┘  └────┬────┘          │
+└─────────┼────────────┼────────────┼────────────┼────────────────┘
+          │            │            │            │
+          ▼            ▼            ▼            ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │              EXPRESS.JS API SERVER                           │
+    │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐    │
+    │  │  Auth    │  │ Projects │  │ Tracking │  │  Query   │    │
+    │  │ /auth/*  │  │ /project │  │ /track   │  │ /submit  │    │
+    │  └──────────┘  └──────────┘  └──────────┘  └──────────┘    │
+    └─────────────────────────┬───────────────────────────────────┘
+                              │
+                              ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │                    SUPABASE                                  │
+    │  ┌──────────┐  ┌──────────┐  ┌──────────────┐               │
+    │  │  users   │  │ projects │  │ submissions  │               │
+    │  │   UUID   │  │  API key │  │    JSONB     │               │
+    │  └──────────┘  └──────────┘  └──────────────┘               │
+    └─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │                 REACT DASHBOARD                              │
+    │  📊 Analytics  │  📁 Projects  │  📋 Submissions  │  ⚙️     │
+    └─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📊 Database Schema
+
+```sql
+-- Optimized for form tracking at scale
+users        (id, name, email, password, created_at)
+projects     (id, user_id, name, domain, api_key, created_at)
+submissions  (id, project_id, form_id, data[JSONB], page_url, timestamp)
+```
+
+**Key Features:**
+- ✅ JSONB for flexible form data storage
+- ✅ UUID primary keys for distributed systems
+- ✅ Indexed API keys for fast lookups
+- ✅ Cascading deletes for data integrity
+
+---
 
 ## 🔐 Security
 
-- API key authentication
-- Password field auto-redaction
-- CORS configured
-- Environment variables for secrets
+| Feature | Implementation |
+|---------|----------------|
+| 🔑 API Keys | Unique per project, regeneratable |
+| 🙈 Password Redaction | Automatic in SDK |
+| 🌐 CORS | Configured for cross-origin |
+| 🔒 Environment Variables | Secrets never in code |
+| 🛡️ Row Level Security | Supabase RLS ready |
+
+---
+
+## 🤖 AI-Assisted Development
+
+This project was built with **AI pair programming**:
+
+- 📋 Architecture planning with Claude
+- 💻 Code generation and optimization
+- 🐛 Debugging and problem-solving
+- 📝 Documentation writing
+
+**All code was reviewed, tested, and validated by the team.**
+
+---
+
+## 👥 Team
+
+<h3 align="center">⚡ SYNTAX SULTANS ⚡</h3>
+
+<p align="center">
+  <strong>ACM Hackathon 2026</strong>
+</p>
+
+---
 
 ## 📄 Documentation
 
-- [ARCHITECTURE.md](./ARCHITECTURE.md) - System design
-- [INTEGRATION.md](./INTEGRATION.md) - Integration guide
-- [CLAUDE.md](./CLAUDE.md) - AI context file
+| Document | Description |
+|----------|-------------|
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | System design & API docs |
+| [INTEGRATION.md](./INTEGRATION.md) | Step-by-step integration guide |
+| [CLAUDE.md](./CLAUDE.md) | AI context & project structure |
 
-## 📄 License
+---
 
-MIT License - Built for ACM Hackathon 2026
+## 🎯 What's Next
+
+- [ ] Real-time dashboard updates with WebSockets
+- [ ] Email notifications for new submissions
+- [ ] Advanced analytics with ML insights
+- [ ] Team collaboration features
+- [ ] Webhook integrations (Slack, Discord, Zapier)
+
+---
+
+<p align="center">
+  <strong>Built with 💜 for ACM Hackathon 2026</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/Priyansh9506/Syntax-Sultans">
+    <img src="https://img.shields.io/badge/⭐_Star_this_repo-6366f1?style=for-the-badge" alt="Star"/>
+  </a>
+</p>
