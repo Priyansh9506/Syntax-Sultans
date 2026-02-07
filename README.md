@@ -106,7 +106,7 @@ Export all submissions as JSON. Filter by date, form, or custom criteria.
 > **Try it yourself!**
 > | Email | Password |
 > |-------|----------|
-> | `demo@datapulse.io` | `1demo234` |
+> | `demo@datapulse.io` | `demo123` |
 
 | Dashboard | Projects | Submissions |
 |-----------|----------|-------------|
