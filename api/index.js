@@ -6,15 +6,32 @@ const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 
-// Log env var status for debugging
-console.log('[API] SUPABASE_URL set:', !!process.env.SUPABASE_URL);
-console.log('[API] SUPABASE_KEY set:', !!process.env.SUPABASE_KEY);
+// Check for required environment variables
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
-// Supabase client
-const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_KEY
-);
+// Create Supabase client only if env vars are configured
+let supabase = null;
+if (SUPABASE_URL && SUPABASE_KEY) {
+    supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log('[API] Supabase client initialized');
+} else {
+    console.error('[API] ERROR: Missing SUPABASE_URL or SUPABASE_KEY environment variables');
+}
+
+// Middleware to check if database is configured
+const requireDatabase = (req, res, next) => {
+    if (!supabase) {
+        return res.status(500).json({
+            message: 'Database not configured. Please set SUPABASE_URL and SUPABASE_KEY environment variables in Vercel.',
+            envStatus: {
+                SUPABASE_URL: !!SUPABASE_URL,
+                SUPABASE_KEY: !!SUPABASE_KEY
+            }
+        });
+    }
+    next();
+};
 
 // Middleware
 app.use(cors({
@@ -34,7 +51,7 @@ const tokenStore = new Map();
 // ============================================
 // Auth Routes
 // ============================================
-app.post('/api/auth/register', async (req, res) => {
+app.post('/api/auth/register', requireDatabase, async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
@@ -74,7 +91,7 @@ app.post('/api/auth/register', async (req, res) => {
     }
 });
 
-app.post('/api/auth/login', async (req, res) => {
+app.post('/api/auth/login', requireDatabase, async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -105,7 +122,7 @@ app.post('/api/auth/login', async (req, res) => {
 // ============================================
 // User Management Routes
 // ============================================
-app.put('/api/auth/profile', async (req, res) => {
+app.put('/api/auth/profile', requireDatabase, async (req, res) => {
     try {
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -135,7 +152,7 @@ app.put('/api/auth/profile', async (req, res) => {
     }
 });
 
-app.put('/api/auth/password', async (req, res) => {
+app.put('/api/auth/password', requireDatabase, async (req, res) => {
     try {
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -177,7 +194,7 @@ app.put('/api/auth/password', async (req, res) => {
     }
 });
 
-app.delete('/api/auth/account', async (req, res) => {
+app.delete('/api/auth/account', requireDatabase, async (req, res) => {
     try {
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -233,7 +250,7 @@ const authMiddleware = async (req, res, next) => {
 // ============================================
 // Projects Routes
 // ============================================
-app.get('/api/projects', authMiddleware, async (req, res) => {
+app.get('/api/projects', requireDatabase, authMiddleware, async (req, res) => {
     try {
         const { data: projects, error } = await supabase
             .from('projects')
@@ -260,7 +277,7 @@ app.get('/api/projects', authMiddleware, async (req, res) => {
     }
 });
 
-app.post('/api/projects', authMiddleware, async (req, res) => {
+app.post('/api/projects', requireDatabase, authMiddleware, async (req, res) => {
     try {
         const { name, domain } = req.body;
 
@@ -285,7 +302,7 @@ app.post('/api/projects', authMiddleware, async (req, res) => {
     }
 });
 
-app.put('/api/projects/:id', authMiddleware, async (req, res) => {
+app.put('/api/projects/:id', requireDatabase, authMiddleware, async (req, res) => {
     try {
         const { id } = req.params;
         const { name, domain } = req.body;
@@ -311,7 +328,7 @@ app.put('/api/projects/:id', authMiddleware, async (req, res) => {
     }
 });
 
-app.delete('/api/projects/:id', authMiddleware, async (req, res) => {
+app.delete('/api/projects/:id', requireDatabase, authMiddleware, async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -330,7 +347,7 @@ app.delete('/api/projects/:id', authMiddleware, async (req, res) => {
     }
 });
 
-app.post('/api/projects/:id/key', authMiddleware, async (req, res) => {
+app.post('/api/projects/:id/key', requireDatabase, authMiddleware, async (req, res) => {
     try {
         const { id } = req.params;
         const newApiKey = generateApiKey();
@@ -357,7 +374,7 @@ app.post('/api/projects/:id/key', authMiddleware, async (req, res) => {
 // ============================================
 // Tracking Route (Public)
 // ============================================
-app.post('/api/track', async (req, res) => {
+app.post('/api/track', requireDatabase, async (req, res) => {
     try {
         const { apiKey, formId, data, pageUrl, userAgent } = req.body;
 
@@ -397,7 +414,7 @@ app.post('/api/track', async (req, res) => {
 // ============================================
 // Submissions Routes
 // ============================================
-app.get('/api/submissions', authMiddleware, async (req, res) => {
+app.get('/api/submissions', requireDatabase, authMiddleware, async (req, res) => {
     try {
         const { data: projects } = await supabase
             .from('projects')
@@ -425,7 +442,7 @@ app.get('/api/submissions', authMiddleware, async (req, res) => {
     }
 });
 
-app.get('/api/submissions/:id', authMiddleware, async (req, res) => {
+app.get('/api/submissions/:id', requireDatabase, authMiddleware, async (req, res) => {
     try {
         const { id } = req.params;
 
