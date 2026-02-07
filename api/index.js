@@ -1,8 +1,8 @@
-// Vercel serverless function - env vars come from Vercel dashboard
-const express = require('express');
-const cors = require('cors');
-const crypto = require('crypto');
-const { createClient } = require('@supabase/supabase-js');
+// Vercel serverless function - ESM format to match package.json "type": "module"
+import express from 'express';
+import cors from 'cors';
+import crypto from 'crypto';
+import { createClient } from '@supabase/supabase-js';
 
 const app = express();
 
@@ -40,7 +40,7 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Helper functions
+// Helper functions using crypto module
 const generateId = () => crypto.randomUUID();
 const generateApiKey = () => `dp_${crypto.randomBytes(16).toString('hex')}`;
 const generateToken = () => crypto.randomBytes(32).toString('hex');
@@ -471,9 +471,10 @@ app.get('/api/health', (req, res) => {
         status: 'ok',
         database: 'supabase',
         envConfigured: !!(process.env.SUPABASE_URL && process.env.SUPABASE_KEY),
+        nodeVersion: process.version,
         timestamp: new Date().toISOString()
     });
 });
 
 // Export the app for Vercel
-module.exports = app;
+export default app;
