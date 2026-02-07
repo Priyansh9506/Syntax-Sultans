@@ -177,25 +177,28 @@ export default function Dashboard() {
                             </div>
                         ) : (
                             <div className="recent-list">
-                                {recentSubmissions.map((submission, index) => (
-                                    <div key={index} className="recent-item">
-                                        <div className="recent-item-icon">
-                                            <Inbox size={16} />
+                                {recentSubmissions.map((submission, index) => {
+                                    const project = projects.find(p => p.id === submission.project_id);
+                                    return (
+                                        <div key={index} className="recent-item">
+                                            <div className="recent-item-icon">
+                                                <Inbox size={16} />
+                                            </div>
+                                            <div className="recent-item-content">
+                                                <p className="recent-item-title">
+                                                    {submission.form_id || 'Form Submission'}
+                                                </p>
+                                                <p className="recent-item-meta">
+                                                    🌐 {project?.name || project?.domain || 'Unknown Website'}
+                                                </p>
+                                            </div>
+                                            <div className="recent-item-time">
+                                                <Clock size={12} />
+                                                {format(new Date(submission.timestamp), 'HH:mm')}
+                                            </div>
                                         </div>
-                                        <div className="recent-item-content">
-                                            <p className="recent-item-title">
-                                                {submission.formId || 'Form Submission'}
-                                            </p>
-                                            <p className="recent-item-meta">
-                                                {projects.find(p => p.id === submission.projectId)?.name || 'Unknown Project'}
-                                            </p>
-                                        </div>
-                                        <div className="recent-item-time">
-                                            <Clock size={12} />
-                                            {format(new Date(submission.timestamp), 'HH:mm')}
-                                        </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         )}
                     </div>
