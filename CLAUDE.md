@@ -1,51 +1,60 @@
-# DataPulse - Project Context for AI Assistants
+# DataPulse - Project Context
 
-## Project Overview
-DataPulse is a Universal Website Data Tracking SaaS platform built for ACM Hackathon 2026. It allows developers to track form submissions from their websites without complex setup.
+## Overview
+Universal Website Data Tracking SaaS for ACM Hackathon 2026.
+Track form submissions without complex setup.
 
 ## Tech Stack
 - **Frontend**: React 19 + Vite (port 5173)
 - **Backend**: Express.js (port 3001)
-- **Styling**: Vanilla CSS with custom design system
+- **Database**: Supabase (PostgreSQL)
+- **Styling**: Vanilla CSS, dark theme
 - **Charts**: Recharts
 - **Icons**: Lucide React
-- **Storage**: In-memory (demo)
 
 ## Project Structure
 ```
 Data Pluse/
 ├── public/datapulse.js     # Tracking SDK
-├── server/server.js        # Express API
+├── server/
+│   ├── server.js           # Express API + Supabase
+│   ├── schema.sql          # DB schema
+│   └── .env                # Credentials
 ├── src/
 │   ├── components/         # Navbar, Sidebar
 │   ├── context/            # AuthContext, DataContext
-│   ├── pages/              # Landing, Dashboard, Projects, etc.
-│   ├── App.jsx             # Router setup
+│   ├── pages/              # All pages
 │   └── index.css           # Design system
-└── demo-website/           # Test website with forms
+└── demo-website/           # Test forms
 ```
 
-## Key Commands
+## Commands
 ```bash
-# Start backend
+# Backend
 cd server && node server.js
 
-# Start frontend
+# Frontend
 npm run dev
 ```
 
 ## API Endpoints
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-- `GET/POST /api/projects` - Project management
-- `POST /api/track` - Receive form submissions (public)
-- `GET /api/submissions` - Get submissions
+- `POST /api/auth/register` - Register
+- `POST /api/auth/login` - Login
+- `GET/POST /api/projects` - Projects
+- `POST /api/track` - Track submissions
+- `GET /api/submissions` - Get data
+
+## Database Tables
+- `users` - User accounts
+- `projects` - Tracked websites
+- `submissions` - Form data (JSONB)
 
 ## Demo Credentials
 - Email: demo@datapulse.io
 - API Key: dp_demo_key_12345
 
-## Important Notes
-- Uses in-memory storage (data resets on server restart)
-- CORS enabled for cross-origin tracking
-- Password fields auto-redacted by SDK
+## Environment Variables
+```
+SUPABASE_URL=https://xxx.supabase.co
+SUPABASE_KEY=your-anon-key
+```

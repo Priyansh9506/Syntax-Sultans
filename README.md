@@ -2,13 +2,14 @@
 
 **Universal Website Data Tracking & Intelligence SaaS**
 
-A modern platform that allows developers to integrate form tracking into their websites without requiring deep technical expertise.
+A modern platform that allows developers to integrate form tracking into their websites without requiring deep technical expertise. Built with React, Express.js, and Supabase.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Node.js 18+
 - npm
+- Supabase account (free tier)
 
 ### Installation
 
@@ -24,6 +25,11 @@ cd server
 npm install
 ```
 
+3. **Set up Supabase:**
+   - Create a project at https://supabase.com
+   - Run `schema.sql` in the SQL Editor
+   - Copy your credentials to `server/.env`
+
 ### Running the Application
 
 1. **Start the backend API server:**
@@ -31,33 +37,37 @@ npm install
 cd server
 node server.js
 ```
-The API will run on http://localhost:3001
+API runs on http://localhost:3001
 
-2. **Start the frontend (new terminal):**
+2. **Start the frontend:**
 ```bash
-cd "Data Pluse"
 npm run dev
 ```
-The app will run on http://localhost:5173
+App runs on http://localhost:5173
 
-3. **Open the demo website (optional):**
-Open `demo-website/index.html` in your browser to test form tracking
+3. **Test with demo forms:**
+Open `demo-website/index.html` in your browser
 
 ## 📱 Features
 
-- **Modern Dashboard**: Real-time stats, charts, and recent activity
-- **Project Management**: Create and manage multiple tracked websites
-- **Form Submissions**: View, filter, and export captured form data
-- **Easy Integration**: Simple JavaScript snippet for tracking
-- **Demo Mode**: Try the platform without signing up
+- **Modern Dashboard** - Real-time stats, charts, recent activity
+- **Project Management** - Create/manage tracked websites with API keys
+- **Form Submissions** - View, filter, export captured form data
+- **Easy Integration** - Simple JavaScript snippet
+- **Supabase Backend** - Persistent PostgreSQL storage
+- **Demo Mode** - Try without signing up
 
-## 🏗️ Architecture
+## 🏗️ Tech Stack
 
-- **Frontend**: React 19, Vite, React Router, Recharts
-- **Backend**: Express.js with in-memory storage
-- **SDK**: Lightweight vanilla JavaScript (~2KB)
-
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed documentation.
+| Layer | Technology |
+|-------|------------|
+| Frontend | React 19 + Vite |
+| Styling | Vanilla CSS |
+| Charts | Recharts |
+| Icons | Lucide React |
+| Backend | Express.js |
+| Database | Supabase (PostgreSQL) |
+| SDK | Vanilla JavaScript (~2KB) |
 
 ## 📖 Integration
 
@@ -67,24 +77,47 @@ Add this to your website before `</body>`:
 <script>
 (function(d,p,k){
   var s=d.createElement('script');
-  s.src='http://localhost:5173/datapulse.js';
+  s.src='YOUR_DATAPULSE_URL/datapulse.js';
   s.dataset.key='YOUR_API_KEY';
-  s.dataset.url='http://localhost:3001/api/track';
+  s.dataset.url='YOUR_API_URL/api/track';
   s.async=true;
   d.head.appendChild(s);
 })(document,'datapulse','YOUR_API_KEY');
 </script>
 ```
 
-See [INTEGRATION.md](./INTEGRATION.md) for the full guide.
+See [INTEGRATION.md](./INTEGRATION.md) for full guide.
+
+## 📁 Project Structure
+
+```
+Data Pluse/
+├── public/datapulse.js     # Tracking SDK
+├── server/
+│   ├── server.js           # Express API
+│   ├── schema.sql          # Database schema
+│   └── .env                # Supabase credentials
+├── src/
+│   ├── components/         # Navbar, Sidebar
+│   ├── context/            # Auth, Data providers
+│   ├── pages/              # All page components
+│   └── index.css           # Design system
+└── demo-website/           # Test forms
+
+```
 
 ## 🔐 Security
 
-- API key authentication for tracking
-- Automatic password field redaction
-- CORS configuration for cross-origin requests
+- API key authentication
+- Password field auto-redaction
+- CORS configured
+- Environment variables for secrets
 
-*Note: This is a hackathon demo using in-memory storage. For production, use a proper database and JWT authentication.*
+## 📄 Documentation
+
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - System design
+- [INTEGRATION.md](./INTEGRATION.md) - Integration guide
+- [CLAUDE.md](./CLAUDE.md) - AI context file
 
 ## 📄 License
 

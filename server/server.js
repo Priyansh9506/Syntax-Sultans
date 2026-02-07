@@ -1,22 +1,21 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const crypto = require('crypto');
+const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 const PORT = 3001;
 
+// Supabase client
+const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_KEY
+);
+
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-// ============================================
-// In-Memory Database (for demo purposes)
-// ============================================
-const db = {
-    users: [],
-    projects: [],
-    submissions: [],
-};
 
 // Helper functions
 const generateId = () => crypto.randomUUID();
@@ -26,68 +25,110 @@ const generateToken = () => crypto.randomBytes(32).toString('hex');
 // ============================================
 // Auth Routes
 // ============================================
-app.post('/api/auth/register', (req, res) => {
-    const { name, email, password } = req.body;
+app.post('/api/auth/register', async (req, res) => {
+    try {
+        const { name, email, password } = req.body;
 
-    // Check if user exists
-    if (db.users.find(u => u.email === email)) {
-        return res.status(400).json({ message: 'User already exists' });
+        // Check if user exists
+        const { data: existingUser } = await supabase
+            .from('users')
+            .select('id')
+            .eq('email', email)
+            .single();
+
+        if (existingUser) {
+            return res.status(400).json({ message: 'User already exists' });
+        }
+
+        // Create user
+        const { data: user, error } = await supabase
+            .from('users')
+            .insert({
+                id: generateId(),
+                name,
+                email,
+                password // In production, hash this!
+            })
+            .select()
+            .single();
+
+        if (error) throw error;
+
+        const token = generateToken();
+
+        res.status(201).json({
+            user: { id: user.id, name: user.name, email: user.email, createdAt: user.created_at },
+            token,
+        });
+    } catch (error) {
+        console.error('Register error:', error);
+        res.status(500).json({ message: 'Server error' });
     }
-
-    const user = {
-        id: generateId(),
-        name,
-        email,
-        password, // In production, hash this!
-        createdAt: new Date().toISOString(),
-    };
-
-    db.users.push(user);
-
-    const token = generateToken();
-
-    res.status(201).json({
-        user: { id: user.id, name: user.name, email: user.email, createdAt: user.createdAt },
-        token,
-    });
 });
 
-app.post('/api/auth/login', (req, res) => {
-    const { email, password } = req.body;
+app.post('/api/auth/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
 
-    const user = db.users.find(u => u.email === email && u.password === password);
+        const { data: user, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('email', email)
+            .eq('password', password)
+            .single();
 
-    if (!user) {
-        return res.status(401).json({ message: 'Invalid credentials' });
+        if (error || !user) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        const token = generateToken();
+
+        res.json({
+            user: { id: user.id, name: user.name, email: user.email, createdAt: user.created_at },
+            token,
+        });
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ message: 'Server error' });
     }
-
-    const token = generateToken();
-
-    res.json({
-        user: { id: user.id, name: user.name, email: user.email, createdAt: user.createdAt },
-        token,
-    });
 });
 
 // ============================================
 // Auth Middleware
 // ============================================
-const authMiddleware = (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    // For demo, we'll accept any token and use a demo user
-    // In production, verify JWT token
+    // For demo, accept demo token
     const token = authHeader.split(' ')[1];
 
-    if (token === 'demo-token') {
-        req.userId = 'demo-user-001';
+    // Get demo user by email
+    let { data: user } = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', 'demo@datapulse.io')
+        .single();
+
+    if (user) {
+        req.userId = user.id;
     } else {
-        // For simplicity, accept any token and use first user
-        req.userId = db.users[0]?.id || 'demo-user-001';
+        // Create demo user with proper UUID
+        const demoUserId = generateId();
+        const { data: newUser } = await supabase
+            .from('users')
+            .insert({
+                id: demoUserId,
+                name: 'Demo User',
+                email: 'demo@datapulse.io',
+                password: 'demo123'
+            })
+            .select()
+            .single();
+        req.userId = newUser?.id || demoUserId;
     }
 
     next();
@@ -96,188 +137,274 @@ const authMiddleware = (req, res, next) => {
 // ============================================
 // Projects Routes
 // ============================================
-app.get('/api/projects', authMiddleware, (req, res) => {
-    const userProjects = db.projects.filter(p => p.userId === req.userId);
+app.get('/api/projects', authMiddleware, async (req, res) => {
+    try {
+        const { data: projects, error } = await supabase
+            .from('projects')
+            .select('*')
+            .eq('user_id', req.userId);
 
-    // Add submission count
-    const projectsWithCount = userProjects.map(p => ({
-        ...p,
-        submissionCount: db.submissions.filter(s => s.projectId === p.id).length,
-    }));
+        if (error) throw error;
 
-    res.json(projectsWithCount);
-});
+        // Get submission counts
+        const projectsWithCount = await Promise.all(
+            (projects || []).map(async (p) => {
+                const { count } = await supabase
+                    .from('submissions')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('project_id', p.id);
 
-app.post('/api/projects', authMiddleware, (req, res) => {
-    const { name, domain } = req.body;
+                return { ...p, submissionCount: count || 0 };
+            })
+        );
 
-    const project = {
-        id: generateId(),
-        userId: req.userId,
-        name,
-        domain,
-        apiKey: generateApiKey(),
-        createdAt: new Date().toISOString(),
-    };
-
-    db.projects.push(project);
-
-    res.status(201).json(project);
-});
-
-app.delete('/api/projects/:id', authMiddleware, (req, res) => {
-    const { id } = req.params;
-
-    const projectIndex = db.projects.findIndex(p => p.id === id && p.userId === req.userId);
-
-    if (projectIndex === -1) {
-        return res.status(404).json({ message: 'Project not found' });
+        res.json(projectsWithCount);
+    } catch (error) {
+        console.error('Get projects error:', error);
+        res.status(500).json({ message: 'Server error' });
     }
-
-    db.projects.splice(projectIndex, 1);
-
-    // Also delete related submissions
-    db.submissions = db.submissions.filter(s => s.projectId !== id);
-
-    res.status(204).send();
 });
 
-app.post('/api/projects/:id/key', authMiddleware, (req, res) => {
-    const { id } = req.params;
+app.post('/api/projects', authMiddleware, async (req, res) => {
+    try {
+        const { name, domain } = req.body;
 
-    const project = db.projects.find(p => p.id === id && p.userId === req.userId);
+        const { data: project, error } = await supabase
+            .from('projects')
+            .insert({
+                id: generateId(),
+                user_id: req.userId,
+                name,
+                domain,
+                api_key: generateApiKey()
+            })
+            .select()
+            .single();
 
-    if (!project) {
-        return res.status(404).json({ message: 'Project not found' });
+        if (error) throw error;
+
+        res.status(201).json(project);
+    } catch (error) {
+        console.error('Create project error:', error);
+        res.status(500).json({ message: 'Server error' });
     }
+});
 
-    project.apiKey = generateApiKey();
+app.delete('/api/projects/:id', authMiddleware, async (req, res) => {
+    try {
+        const { id } = req.params;
 
-    res.json({ apiKey: project.apiKey });
+        const { error } = await supabase
+            .from('projects')
+            .delete()
+            .eq('id', id)
+            .eq('user_id', req.userId);
+
+        if (error) throw error;
+
+        res.status(204).send();
+    } catch (error) {
+        console.error('Delete project error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+app.post('/api/projects/:id/key', authMiddleware, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const newApiKey = generateApiKey();
+
+        const { data: project, error } = await supabase
+            .from('projects')
+            .update({ api_key: newApiKey })
+            .eq('id', id)
+            .eq('user_id', req.userId)
+            .select()
+            .single();
+
+        if (error || !project) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        res.json({ apiKey: project.api_key });
+    } catch (error) {
+        console.error('Regenerate key error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
 });
 
 // ============================================
 // Tracking Route (Public - for SDK)
 // ============================================
-app.post('/api/track', (req, res) => {
-    const { apiKey, formId, data, pageUrl, userAgent } = req.body;
+app.post('/api/track', async (req, res) => {
+    try {
+        const { apiKey, formId, data, pageUrl, userAgent } = req.body;
 
-    // Find project by API key
-    const project = db.projects.find(p => p.apiKey === apiKey);
+        // Find project by API key
+        const { data: project, error: projectError } = await supabase
+            .from('projects')
+            .select('id, name')
+            .eq('api_key', apiKey)
+            .single();
 
-    if (!project) {
-        return res.status(401).json({ message: 'Invalid API key' });
+        if (projectError || !project) {
+            return res.status(401).json({ message: 'Invalid API key' });
+        }
+
+        // Insert submission
+        const { data: submission, error } = await supabase
+            .from('submissions')
+            .insert({
+                id: generateId(),
+                project_id: project.id,
+                form_id: formId || 'unknown',
+                data: data || {},
+                page_url: pageUrl || '',
+                user_agent: userAgent || ''
+            })
+            .select()
+            .single();
+
+        if (error) throw error;
+
+        console.log(`[DataPulse] New submission for project "${project.name}":`, submission.id);
+
+        res.status(201).json({ success: true, id: submission.id });
+    } catch (error) {
+        console.error('Track error:', error);
+        res.status(500).json({ message: 'Server error' });
     }
-
-    const submission = {
-        id: generateId(),
-        projectId: project.id,
-        formId: formId || 'unknown',
-        data: data || {},
-        pageUrl: pageUrl || '',
-        userAgent: userAgent || '',
-        timestamp: new Date().toISOString(),
-    };
-
-    db.submissions.push(submission);
-
-    console.log(`[DataPulse] New submission for project "${project.name}":`, submission);
-
-    res.status(201).json({ success: true, id: submission.id });
 });
 
 // ============================================
 // Submissions Routes
 // ============================================
-app.get('/api/submissions', authMiddleware, (req, res) => {
-    // Get all submissions for user's projects
-    const userProjectIds = db.projects
-        .filter(p => p.userId === req.userId)
-        .map(p => p.id);
+app.get('/api/submissions', authMiddleware, async (req, res) => {
+    try {
+        // Get user's project IDs
+        const { data: projects } = await supabase
+            .from('projects')
+            .select('id')
+            .eq('user_id', req.userId);
 
-    const userSubmissions = db.submissions
-        .filter(s => userProjectIds.includes(s.projectId))
-        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        const projectIds = (projects || []).map(p => p.id);
 
-    res.json(userSubmissions);
+        if (projectIds.length === 0) {
+            return res.json([]);
+        }
+
+        // Get submissions for those projects
+        const { data: submissions, error } = await supabase
+            .from('submissions')
+            .select('*')
+            .in('project_id', projectIds)
+            .order('timestamp', { ascending: false });
+
+        if (error) throw error;
+
+        res.json(submissions || []);
+    } catch (error) {
+        console.error('Get submissions error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
 });
 
-app.get('/api/submissions/:id', authMiddleware, (req, res) => {
-    const { id } = req.params;
+app.get('/api/submissions/:id', authMiddleware, async (req, res) => {
+    try {
+        const { id } = req.params;
 
-    const submission = db.submissions.find(s => s.id === id);
+        const { data: submission, error } = await supabase
+            .from('submissions')
+            .select('*')
+            .eq('id', id)
+            .single();
 
-    if (!submission) {
-        return res.status(404).json({ message: 'Submission not found' });
+        if (error || !submission) {
+            return res.status(404).json({ message: 'Submission not found' });
+        }
+
+        res.json(submission);
+    } catch (error) {
+        console.error('Get submission error:', error);
+        res.status(500).json({ message: 'Server error' });
     }
-
-    res.json(submission);
 });
 
 // ============================================
 // Health Check
 // ============================================
 app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+    res.json({ status: 'ok', database: 'supabase', timestamp: new Date().toISOString() });
 });
 
 // ============================================
 // Start Server
 // ============================================
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
     console.log(`
   ╔════════════════════════════════════════════╗
   ║                                            ║
   ║   🚀 DataPulse API Server                  ║
   ║   Running on http://localhost:${PORT}         ║
+  ║   Database: Supabase (PostgreSQL)          ║
   ║                                            ║
   ╚════════════════════════════════════════════╝
   `);
 
-    // Create demo data
-    const demoUser = {
-        id: 'demo-user-001',
-        name: 'Demo User',
-        email: 'demo@datapulse.io',
-        password: 'demo123',
-        createdAt: new Date().toISOString(),
-    };
-    db.users.push(demoUser);
+    // Create demo user and project if they don't exist
+    try {
+        const { data: existingUser } = await supabase
+            .from('users')
+            .select('id')
+            .eq('email', 'demo@datapulse.io')
+            .single();
 
-    const demoProject = {
-        id: 'demo-project-001',
-        userId: 'demo-user-001',
-        name: 'Demo Website',
-        domain: 'demo.datapulse.io',
-        apiKey: 'dp_demo_key_12345',
-        createdAt: new Date().toISOString(),
-    };
-    db.projects.push(demoProject);
+        if (!existingUser) {
+            // Create with proper UUIDs
+            const demoUserId = generateId();
+            const demoProjectId = generateId();
 
-    // Add some demo submissions
-    const demoSubmissions = [
-        { formId: 'contact-form', data: { name: 'John Doe', email: 'john@example.com', message: 'Hello!' } },
-        { formId: 'newsletter', data: { email: 'jane@example.com' } },
-        { formId: 'feedback', data: { rating: '5', comment: 'Great service!' } },
-    ];
+            await supabase.from('users').insert({
+                id: demoUserId,
+                name: 'Demo User',
+                email: 'demo@datapulse.io',
+                password: 'demo123'
+            });
 
-    demoSubmissions.forEach((sub, i) => {
-        const date = new Date();
-        date.setHours(date.getHours() - i * 2);
+            await supabase.from('projects').insert({
+                id: demoProjectId,
+                user_id: demoUserId,
+                name: 'Demo Website',
+                domain: 'demo.datapulse.io',
+                api_key: 'dp_demo_key_12345'
+            });
 
-        db.submissions.push({
-            id: generateId(),
-            projectId: 'demo-project-001',
-            formId: sub.formId,
-            data: sub.data,
-            pageUrl: 'https://demo.datapulse.io',
-            timestamp: date.toISOString(),
-        });
-    });
+            console.log('  Demo data created in Supabase');
+        } else {
+            // Check if demo project exists
+            const { data: existingProject } = await supabase
+                .from('projects')
+                .select('id')
+                .eq('api_key', 'dp_demo_key_12345')
+                .single();
 
-    console.log('  Demo data created:');
-    console.log('  - Demo user: demo@datapulse.io');
-    console.log('  - Demo project with API key: dp_demo_key_12345');
-    console.log('  - 3 sample submissions');
+            if (!existingProject) {
+                await supabase.from('projects').insert({
+                    id: generateId(),
+                    user_id: existingUser.id,
+                    name: 'Demo Website',
+                    domain: 'demo.datapulse.io',
+                    api_key: 'dp_demo_key_12345'
+                });
+                console.log('  Demo project created');
+            } else {
+                console.log('  Demo data already exists');
+            }
+        }
+    } catch (error) {
+        console.log('  Note: Run SQL schema in Supabase first');
+        console.log('  Error:', error.message);
+    }
+
     console.log('');
 });
