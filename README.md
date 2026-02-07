@@ -97,7 +97,9 @@ Export all submissions as JSON. Filter by date, form, or custom criteria.
 
 ## 🎬 Demo
 
-[![Watch the video](https://img.youtube.com/vi/hnGPVjSabV0/maxresdefault.jpg)](https://www.youtube.com/watch?v=hnGPVjSabV0)
+### YouTube Demo Video
+
+[![YouTube Demo Video](https://img.youtube.com/vi/hnGPVjSabV0/maxresdefault.jpg)](https://www.youtube.com/watch?v=hnGPVjSabV0&autoplay=1)
 
 ### Live Dashboard Preview
 
