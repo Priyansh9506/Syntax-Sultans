@@ -6,7 +6,7 @@
 > Overview of project context and structure for AI assistants.
 
 ## Overview
-Universal Website Data Tracking SaaS for ACM Hackathon 2026.
+Universal Website Data Tracking SaaS for ACM Nirma University Chapter Hackathon: Prompt to Prototype.
 Track form submissions from any website with one line of code.
 
 ## Tech Stack
