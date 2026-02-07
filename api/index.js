@@ -1,10 +1,14 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
+// Vercel serverless function - env vars come from Vercel dashboard
 const express = require('express');
 const cors = require('cors');
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
+
+// Log env var status for debugging
+console.log('[API] SUPABASE_URL set:', !!process.env.SUPABASE_URL);
+console.log('[API] SUPABASE_KEY set:', !!process.env.SUPABASE_KEY);
 
 // Supabase client
 const supabase = createClient(
@@ -14,7 +18,7 @@ const supabase = createClient(
 
 // Middleware
 app.use(cors({
-    origin: true, // Allow all origins (configure this for production)
+    origin: true,
     credentials: true
 }));
 app.use(express.json());
@@ -24,8 +28,7 @@ const generateId = () => crypto.randomUUID();
 const generateApiKey = () => `dp_${crypto.randomBytes(16).toString('hex')}`;
 const generateToken = () => crypto.randomBytes(32).toString('hex');
 
-// In-memory token store: token -> userId mapping
-// Note: In serverless, this resets on cold start. Consider using database for production.
+// In-memory token store (resets on cold start in serverless)
 const tokenStore = new Map();
 
 // ============================================
@@ -35,7 +38,6 @@ app.post('/api/auth/register', async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
-        // Check if user exists
         const { data: existingUser } = await supabase
             .from('users')
             .select('id')
@@ -46,14 +48,13 @@ app.post('/api/auth/register', async (req, res) => {
             return res.status(400).json({ message: 'User already exists' });
         }
 
-        // Create user
         const { data: user, error } = await supabase
             .from('users')
             .insert({
                 id: generateId(),
                 name,
                 email,
-                password // In production, hash this!
+                password
             })
             .select()
             .single();
@@ -62,7 +63,6 @@ app.post('/api/auth/register', async (req, res) => {
 
         const token = generateToken();
         tokenStore.set(token, user.id);
-        console.log(`[Auth] User registered: ${email} (ID: ${user.id})`);
 
         res.status(201).json({
             user: { id: user.id, name: user.name, email: user.email, createdAt: user.created_at },
@@ -91,7 +91,6 @@ app.post('/api/auth/login', async (req, res) => {
 
         const token = generateToken();
         tokenStore.set(token, user.id);
-        console.log(`[Auth] User logged in: ${email} (ID: ${user.id})`);
 
         res.json({
             user: { id: user.id, name: user.name, email: user.email, createdAt: user.created_at },
@@ -104,7 +103,7 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 // ============================================
-// User Management Routes (require auth)
+// User Management Routes
 // ============================================
 app.put('/api/auth/profile', async (req, res) => {
     try {
@@ -129,7 +128,6 @@ app.put('/api/auth/profile', async (req, res) => {
 
         if (error) throw error;
 
-        console.log(`[Auth] Profile updated for user: ${userId}`);
         res.json({ user: { id: user.id, name: user.name, email: user.email } });
     } catch (error) {
         console.error('Profile update error:', error);
@@ -172,7 +170,6 @@ app.put('/api/auth/password', async (req, res) => {
 
         if (error) throw error;
 
-        console.log(`[Auth] Password updated for user: ${userId}`);
         res.json({ message: 'Password updated successfully' });
     } catch (error) {
         console.error('Password update error:', error);
@@ -205,8 +202,6 @@ app.delete('/api/auth/account', async (req, res) => {
         if (error) throw error;
 
         tokenStore.delete(token);
-
-        console.log(`[Auth] Account deleted for user: ${userId}`);
         res.status(204).send();
     } catch (error) {
         console.error('Account deletion error:', error);
@@ -229,11 +224,9 @@ const authMiddleware = async (req, res, next) => {
 
     if (userId) {
         req.userId = userId;
-        console.log(`[Auth] Request authenticated for user: ${userId}`);
         return next();
     }
 
-    console.log(`[Auth] Invalid/expired token, user needs to re-login`);
     return res.status(401).json({ message: 'Session expired, please login again' });
 };
 
@@ -362,7 +355,7 @@ app.post('/api/projects/:id/key', authMiddleware, async (req, res) => {
 });
 
 // ============================================
-// Tracking Route (Public - for SDK)
+// Tracking Route (Public)
 // ============================================
 app.post('/api/track', async (req, res) => {
     try {
@@ -393,8 +386,6 @@ app.post('/api/track', async (req, res) => {
             .single();
 
         if (error) throw error;
-
-        console.log(`[DataPulse] New submission for project "${project.name}":`, submission.id);
 
         res.status(201).json({ success: true, id: submission.id });
     } catch (error) {
@@ -459,7 +450,12 @@ app.get('/api/submissions/:id', authMiddleware, async (req, res) => {
 // Health Check
 // ============================================
 app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', database: 'supabase', timestamp: new Date().toISOString() });
+    res.json({
+        status: 'ok',
+        database: 'supabase',
+        envConfigured: !!(process.env.SUPABASE_URL && process.env.SUPABASE_KEY),
+        timestamp: new Date().toISOString()
+    });
 });
 
 // Export the app for Vercel
