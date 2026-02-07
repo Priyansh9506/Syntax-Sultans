@@ -259,7 +259,7 @@ export default function Landing() {
                                     if (el) el.scrollIntoView({ behavior: 'smooth' });
                                 }}>Features</a>
                                 <Link to="/subscription">Pricing</Link>
-                                <Link to="/integration">Documentation</Link>
+                                <a href="https://github.com/Priyansh9506/Syntax-Sultans/tree/main/docs" target="_blank" rel="noopener noreferrer">Documentation</a>
                             </div>
                             <div className="footer-column">
                                 <h4>Account</h4>
@@ -269,7 +269,7 @@ export default function Landing() {
                             </div>
                             <div className="footer-column">
                                 <h4>Resources</h4>
-                                <Link to="/integration">Integration Guide</Link>
+                                <a href="https://github.com/Priyansh9506/Syntax-Sultans/blob/main/docs/INTEGRATION.md" target="_blank" rel="noopener noreferrer">Integration Guide</a>
                                 <Link to="/projects">Projects</Link>
                                 <Link to="/submissions">Submissions</Link>
                             </div>
@@ -278,7 +278,7 @@ export default function Landing() {
 
                     <div className="footer-bottom">
                         <p>&copy; 2026 DataPulse. All rights reserved.</p>
-                        <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="footer-social">
+                        <a href="https://github.com/Priyansh9506/Syntax-Sultans" target="_blank" rel="noopener noreferrer" className="footer-social">
                             <Github size={20} />
                         </a>
                     </div>

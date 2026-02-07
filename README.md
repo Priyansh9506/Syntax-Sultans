@@ -19,6 +19,7 @@
 <p align="center">
   <a href="#-features">Features</a> •
   <a href="#-demo">Demo</a> •
+  <a href="#-demo-websites-supporting">Demo Websites</a> •
   <a href="#-tech-stack">Tech Stack</a> •
   <a href="#-quick-start">Quick Start</a> •
   <a href="#-architecture">Architecture</a> •
@@ -200,6 +201,32 @@ cd server && node server.js
 npm run dev
 # ✅ Running on http://localhost:5173
 ```
+
+---
+
+## 🧪 Demo Websites (Supporting)
+
+The project includes **two demo websites** inside the repository that act as sample client sites to test and verify that DataPulse's form tracking SDK is working correctly.
+
+| Demo | Directory | Purpose |
+|------|-----------|----------|
+| **Form Testing Suite** | `demo-website/` | A comprehensive test page with multiple form types (contact, registration, feedback, etc.) to validate that all form submissions are captured by the SDK |
+| **TechStartup Contact Page** | `demo-website-2/` | A realistic single-page contact form simulating a real client website integrated with DataPulse |
+
+### How to Use
+
+1. Make sure the **backend server** is running (`cd server && node server.js`)
+2. Open a demo website in your browser:
+   ```bash
+   # Open directly in browser
+   start demo-website/index.html
+   start demo-website-2/index.html
+   ```
+3. Add your project's **API key** to the DataPulse script tag inside the demo HTML file
+4. Fill out and submit forms on the demo page
+5. Check the **DataPulse dashboard** to verify submissions are being tracked
+
+> **Note:** These demo sites are not part of the main application — they are **supporting tools** used during development and demos to prove that the tracking SDK works on any website.
 
 ---
 

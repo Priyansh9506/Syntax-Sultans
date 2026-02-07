@@ -447,7 +447,7 @@ export default function Subscription() {
                                 <h4>Product</h4>
                                 <Link to="/#features">Features</Link>
                                 <Link to="/subscription">Pricing</Link>
-                                <Link to="/integration">Documentation</Link>
+                                <a href="https://github.com/Priyansh9506/Syntax-Sultans/tree/main/docs" target="_blank" rel="noopener noreferrer">Documentation</a>
                             </div>
                             <div className="footer-column">
                                 <h4>Account</h4>
@@ -457,7 +457,7 @@ export default function Subscription() {
                             </div>
                             <div className="footer-column">
                                 <h4>Resources</h4>
-                                <Link to="/integration">Integration Guide</Link>
+                                <a href="https://github.com/Priyansh9506/Syntax-Sultans/blob/main/docs/INTEGRATION.md" target="_blank" rel="noopener noreferrer">Integration Guide</a>
                                 <Link to="/projects">Projects</Link>
                                 <Link to="/submissions">Submissions</Link>
                             </div>
