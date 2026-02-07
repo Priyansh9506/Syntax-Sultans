@@ -93,6 +93,14 @@ export default function Landing() {
                             <span className="hero-stat-label">Uptime</span>
                         </div>
                     </div>
+
+                    <div className="hero-tagline">
+                        <p className="tagline-quote">
+                            "The intelligent dashboard for visionary entrepreneurs —
+                            <span className="tagline-highlight">real-time insights</span> that turn data into decisions."
+                        </p>
+                        <p className="tagline-sub">Empowering smart businesses with actionable analytics</p>
+                    </div>
                 </div>
 
                 {/* Dashboard Preview */}
